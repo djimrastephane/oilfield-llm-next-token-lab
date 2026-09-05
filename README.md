@@ -112,10 +112,43 @@ in a model's settings.
 asked the same question twice? What does turning down an AI tool's
 "temperature" actually do? Is the model "guessing," and if so, how?
 
-## Installation
+## How to run: three ways, pick what fits you
 
-Works on **macOS, Windows, and Linux** — the steps are the same except for
-one command when you activate the virtual environment.
+### Easiest: open in Google Colab — no installation at all
+
+Click a badge, and the notebook opens and runs in your browser on a free
+Google server. Nothing to install on your own computer.
+
+[![Open Notebook 1 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/djimrastephane/oilfield-llm-next-token-lab/blob/main/notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb)
+**Notebook 1** — What does an LLM actually do?
+
+[![Open Notebook 2 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/djimrastephane/oilfield-llm-next-token-lab/blob/main/notebooks/02_temperature_sampling_and_decoding_strategies.ipynb)
+**Notebook 2** — Why can the same question get a different answer?
+
+This was tested end to end before being added here: on Colab's free tier,
+downloading the ~3 GB model took under a minute (Colab's connection is
+much faster than a typical home connection), and the whole notebook ran
+without any errors or code changes. A few things to expect, honestly:
+
+- The first time you open the link, Colab shows a one-time warning that
+  the notebook wasn't authored by Google, since it's loading from GitHub.
+  Click **"Run anyway"** — you're looking at the real, public source on
+  GitHub, and can review it there first if you'd like.
+- For the best speed, use the menu **Runtime → Change runtime type →
+  T4 GPU** (free) before running — the notebook works on the default
+  CPU setting too, just slower.
+- Colab's copy of the model isn't saved between sessions, so it
+  re-downloads (quickly) each time you open a fresh Colab session.
+- Nothing you type is private here the way it is with local execution —
+  your inputs run on a Google-hosted server, not your own machine. For
+  anything sensitive, use the local option below.
+
+### Local: run everything on your own computer
+
+Nothing you type leaves your machine — the most private option, and the
+one used for every real result and screenshot in this README. Works on
+**macOS, Windows, and Linux**; the steps are the same except for one
+command when you activate the virtual environment.
 
 1. Make sure you have Python 3.10+ installed.
 2. From the repo root, create a virtual environment:
@@ -149,17 +182,30 @@ one command when you activate the virtual environment.
    pip install -r requirements.txt
    ```
 
-## How to run
+5. Run a notebook:
 
-```bash
-jupyter notebook notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
-jupyter notebook notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
-```
+   ```bash
+   jupyter notebook notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
+   jupyter notebook notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
+   ```
 
 Run the cells in order, top to bottom, in either notebook — each stands on
 its own. The first code cell that loads the model will download it from
 Hugging Face the first time you run either one; after that it's cached and
 reused.
+
+### Advanced: clone and configure manually
+
+For the `advanced/` interpretability notebooks, or if you want full
+control over your environment:
+
+```bash
+git clone https://github.com/djimrastephane/oilfield-llm-next-token-lab.git
+cd oilfield-llm-next-token-lab
+```
+
+Then follow the **Local** steps above. See `advanced/README.md` for what
+each of those six notebooks needs.
 
 ## Model and hardware expectations
 
@@ -210,5 +256,6 @@ directly out of the loaded model — nothing is hard-coded, simulated, or
 adjusted to produce a tidier-looking result. If the model's real answer
 isn't the intuitive oilfield word, the notebooks show that honestly rather
 than filtering it out. **No AI or programming background is required for
-the main path** (notebooks 1–2). The advanced path assumes real ML/Python
-fluency — see `advanced/README.md`.
+the main path** (notebooks 1–2) — the Colab option above means you don't
+even need to install anything to see that for yourself. The advanced path
+assumes real ML/Python fluency — see `advanced/README.md`.
