@@ -36,10 +36,17 @@ looking result.
    track spelling, not oilfield meaning), and real attention weights
    extracted layer by layer, with an explicit, sustained caution against
    treating attention as a causal explanation of a prediction.
+4. **`04_gradient_attribution_and_occlusion.ipynb`** — computes methods that
+   are mathematically tied to the model's actual output: gradient × input,
+   Integrated Gradients (validated first on a toy function with a known
+   exact answer, then checked against its own completeness guarantee on the
+   real model — a check it does not cleanly pass, reported honestly rather
+   than hidden), and direct occlusion. Compares all three, and states
+   plainly what none of them can establish on their own.
 
-Deeper interpretability methods (gradient-based attribution, activation
-patching, causal tracing, probing) are left for a possible future notebook
-so this series stays small, focused, and fully verifiable.
+Deeper interpretability methods (activation patching, causal tracing,
+probing) are left for a possible future notebook so this series stays small,
+focused, and fully verifiable.
 
 ## Target audience
 
@@ -59,7 +66,8 @@ oilfield-llm-next-token-lab/
 ├── notebooks/
 │   ├── 01_how_a_real_llm_predicts_the_next_token.ipynb
 │   ├── 02_temperature_sampling_and_decoding_strategies.ipynb
-│   └── 03_embeddings_and_attention.ipynb
+│   ├── 03_embeddings_and_attention.ipynb
+│   └── 04_gradient_attribution_and_occlusion.ipynb
 ├── requirements.txt
 └── README.md
 ```
@@ -86,16 +94,20 @@ oilfield-llm-next-token-lab/
 jupyter notebook notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
 jupyter notebook notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
 jupyter notebook notebooks/03_embeddings_and_attention.ipynb
+jupyter notebook notebooks/04_gradient_attribution_and_occlusion.ipynb
 ```
 
 Each notebook runs independently, top to bottom — none require another
 notebook in the series to have been run first; each repeats the model-loading
 and helper-function setup it needs so it stands on its own. The first code
 cell that loads the model will download it from Hugging Face the first time
-you run any notebook; after that it's cached and reused. Note that notebook 3 loads the same cached weights differently
-(`attn_implementation="eager"`, `float32`) than notebooks 1–2, for reasons
-explained in its own Section 2 — no extra download is needed, but it runs
-somewhat slower than the other two notebooks as a result.
+you run any notebook; after that it's cached and reused. Note that notebook 3
+loads the same cached weights differently (`attn_implementation="eager"`,
+`float32`) than notebooks 1–2, for reasons explained in its own Section 2 —
+no extra download is needed, but it runs somewhat slower as a result.
+Notebook 4 is also slower than notebooks 1–2: its Integrated Gradients
+sections each run dozens to hundreds of forward-and-backward passes, taking
+roughly a minute in total on Apple Silicon (longer on CPU-only machines).
 
 ## Model and hardware expectations
 
@@ -156,3 +168,17 @@ explain:
    they can differ across layers.
 5. Why "the model attended to X, therefore that's why it predicted Y" is an
    overclaim, and what can be said more modestly instead.
+
+After working through **notebook 4** you should additionally be able to
+explain:
+
+1. What gradient-based attribution is, and how it's mathematically
+   connected to the model's output in a way attention isn't.
+2. What "gradient × input" measures, and its key limitation (saturation).
+3. What Integrated Gradients' completeness axiom claims, how to check it
+   with real numbers, and what it means when a theoretically well-motivated
+   method fails that check in practice.
+4. What occlusion-based attribution measures, and how it differs in kind
+   from gradient-based methods.
+5. Why these methods disagreeing with each other — and with attention from
+   notebook 3 — is expected, not a contradiction to explain away.
