@@ -30,10 +30,16 @@ looking result.
    gets selected from it: greedy decoding vs. sampling, temperature, top-k
    and top-p (nucleus) sampling, and a small, fully transparent manual
    generation loop that produces real multi-token oilfield completions.
+3. **`03_embeddings_and_attention.ipynb`** — opens the transformer box a
+   little further: real token embedding vectors and their cosine
+   similarities (including the honest finding that raw embeddings mostly
+   track spelling, not oilfield meaning), and real attention weights
+   extracted layer by layer, with an explicit, sustained caution against
+   treating attention as a causal explanation of a prediction.
 
-Deeper interpretability methods (attention, embeddings, attribution) are left
-for a possible future notebook so this series stays small, focused, and
-fully verifiable.
+Deeper interpretability methods (gradient-based attribution, activation
+patching, causal tracing, probing) are left for a possible future notebook
+so this series stays small, focused, and fully verifiable.
 
 ## Target audience
 
@@ -52,7 +58,8 @@ output (tables, simple charts) is helpful but not required.
 oilfield-llm-next-token-lab/
 ├── notebooks/
 │   ├── 01_how_a_real_llm_predicts_the_next_token.ipynb
-│   └── 02_temperature_sampling_and_decoding_strategies.ipynb
+│   ├── 02_temperature_sampling_and_decoding_strategies.ipynb
+│   └── 03_embeddings_and_attention.ipynb
 ├── requirements.txt
 └── README.md
 ```
@@ -78,13 +85,17 @@ oilfield-llm-next-token-lab/
 ```bash
 jupyter notebook notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
 jupyter notebook notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
+jupyter notebook notebooks/03_embeddings_and_attention.ipynb
 ```
 
-Each notebook runs independently, top to bottom — notebook 2 does not
-require notebook 1 to have been run first; it repeats the same model-loading
-and helper-function setup so it stands on its own. The first code cell that
-loads the model will download it from Hugging Face the first time you run
-either notebook; after that it's cached and reused.
+Each notebook runs independently, top to bottom — none require another
+notebook in the series to have been run first; each repeats the model-loading
+and helper-function setup it needs so it stands on its own. The first code
+cell that loads the model will download it from Hugging Face the first time
+you run any notebook; after that it's cached and reused. Note that notebook 3 loads the same cached weights differently
+(`attn_implementation="eager"`, `float32`) than notebooks 1–2, for reasons
+explained in its own Section 2 — no extra download is needed, but it runs
+somewhat slower than the other two notebooks as a result.
 
 ## Model and hardware expectations
 
@@ -132,3 +143,16 @@ explain:
    model's real probabilities.
 5. How repeating a single decoding step, one token at a time, is what
    generation actually is.
+
+After working through **notebook 3** you should additionally be able to
+explain:
+
+1. What a token embedding vector is, and what similarity between two
+   embeddings does (and does not) tell you.
+2. Why raw input-embedding nearest-neighbors often reflect spelling and
+   sub-word structure rather than oilfield meaning.
+3. What attention is, mechanically, inside a transformer layer.
+4. What real attention weights look like for an oilfield sentence, and how
+   they can differ across layers.
+5. Why "the model attended to X, therefore that's why it predicted Y" is an
+   overclaim, and what can be said more modestly instead.
