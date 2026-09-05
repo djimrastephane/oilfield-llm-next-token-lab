@@ -62,10 +62,22 @@ looking result.
    generalization gap in the middle layers that narrows by the final
    layer), and is explicit that probing tests whether information is
    *present*, not whether the model *uses* it.
+7. **`07_individual_head_circuit_analysis.ipynb`** — goes one level finer
+   than notebooks 3 and 5 combined: isolates and zero-ablates one
+   attention head at a time (out of 12 per layer, 336 total) to find which
+   single heads causally matter most for a prediction, validates the
+   ablation mechanism first (a no-op hook reproduces the clean run
+   exactly), then inspects the most important head's own un-averaged
+   attention pattern — finding, honestly, a real and interpretable
+   convergence between the causal and descriptive evidence for the main
+   prompt, and a real, very different result (an early-layer head
+   mattering far more) for a different prompt in the "try your own"
+   section, underscoring that these findings are prompt-specific rather
+   than universal.
 
-Deeper interpretability methods (individual-head or individual-neuron
-circuit analysis) are left for a possible future notebook so this series
-stays small, focused, and fully verifiable.
+Deeper interpretability methods (individual-neuron analysis inside MLP
+layers, multi-prompt circuit validation) are left for a possible future
+notebook so this series stays small, focused, and fully verifiable.
 
 ## Target audience
 
@@ -88,7 +100,8 @@ oilfield-llm-next-token-lab/
 │   ├── 03_embeddings_and_attention.ipynb
 │   ├── 04_gradient_attribution_and_occlusion.ipynb
 │   ├── 05_activation_patching_and_causal_tracing.ipynb
-│   └── 06_probing_classifiers.ipynb
+│   ├── 06_probing_classifiers.ipynb
+│   └── 07_individual_head_circuit_analysis.ipynb
 ├── requirements.txt
 └── README.md
 ```
@@ -118,26 +131,30 @@ jupyter notebook notebooks/03_embeddings_and_attention.ipynb
 jupyter notebook notebooks/04_gradient_attribution_and_occlusion.ipynb
 jupyter notebook notebooks/05_activation_patching_and_causal_tracing.ipynb
 jupyter notebook notebooks/06_probing_classifiers.ipynb
+jupyter notebook notebooks/07_individual_head_circuit_analysis.ipynb
 ```
 
 Each notebook runs independently, top to bottom — none require another
 notebook in the series to have been run first; each repeats the model-loading
 and helper-function setup it needs so it stands on its own. The first code
 cell that loads the model will download it from Hugging Face the first time
-you run any notebook; after that it's cached and reused. Note that notebook 3
-loads the same cached weights differently (`attn_implementation="eager"`,
-`float32`) than notebooks 1–2, for reasons explained in its own Section 2 —
-no extra download is needed, but it runs somewhat slower as a result.
-Notebook 4 is also slower than notebooks 1–2: its Integrated Gradients
-sections each run dozens to hundreds of forward-and-backward passes, taking
-roughly a minute in total on Apple Silicon (longer on CPU-only machines).
-Notebook 5 runs a full grid of several hundred forward passes (one per
-token position x transformer layer) twice — once for the main prompt, once
-for the "try your own" section — each completing in under a minute on
-Apple Silicon. Notebook 6 additionally requires `scikit-learn` (included in
-`requirements.txt`) and builds its own small labeled dataset (240 sentences)
-before training linear probes; the whole notebook completes in well under a
-minute on Apple Silicon.
+you run any notebook; after that it's cached and reused. Note that notebooks
+3 and 7 load the same cached weights differently (`attn_implementation="eager"`,
+`float32`) than notebooks 1–2, for reasons explained in each notebook's own
+Section 2 — no extra download is needed, but they run somewhat slower as a
+result. Notebook 4 is also slower than notebooks 1–2: its Integrated
+Gradients sections each run dozens to hundreds of forward-and-backward
+passes, taking roughly a minute in total on Apple Silicon (longer on
+CPU-only machines). Notebook 5 runs a full grid of several hundred forward
+passes (one per token position x transformer layer) twice — once for the
+main prompt, once for the "try your own" section — each completing in under
+a minute on Apple Silicon. Notebook 6 additionally requires `scikit-learn`
+(included in `requirements.txt`) and builds its own small labeled dataset
+(240 sentences) before training linear probes; the whole notebook completes
+in well under a minute on Apple Silicon. Notebook 7 runs a full 28x12
+head-ablation grid (336 forward passes) twice — once for the main prompt,
+once for the "try your own" section — each completing in under 20 seconds
+on Apple Silicon.
 
 ## Model and hardware expectations
 
@@ -244,3 +261,19 @@ explain:
    rise sharply at the very first transformer layer.
 5. Why a linear probe's failure at some layer doesn't prove information is
    absent there.
+
+After working through **notebook 7** you should additionally be able to
+explain:
+
+1. How a single attention head's contribution can be isolated and removed
+   from a layer's computation, mechanically, inside a real forward pass.
+2. What a real layer-by-head ablation heatmap looks like, and why most
+   individual heads barely move a given prediction while a few matter far
+   more.
+3. Why agreement between a causal method (ablation) and a descriptive one
+   (that head's own attention pattern), found independently, is stronger
+   evidence than either alone.
+4. What it means for two important heads' effects to combine additively
+   versus interact, and why that has to be checked rather than assumed.
+5. Why a single-prompt case study like this one cannot, by itself,
+   establish a general "circuit" or mechanism.
