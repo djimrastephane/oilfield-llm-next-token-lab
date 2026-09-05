@@ -1,126 +1,116 @@
 # Oilfield LLM Next-Token Lab
 
-A hands-on notebook series that shows, with real numbers read directly out of
-a real open-source language model, how an LLM predicts its next token and how
-it decides which token to actually emit — using realistic drilling,
-completions, and well-intervention sentences.
+You type an oilfield sentence into an AI assistant:
 
-## Purpose
+> "The crew pulled out of hole with the worn PDC bit and prepared to run a new..."
 
-Oil and gas professionals increasingly work alongside LLM-powered tools, but
-it's easy to imagine an LLM as a lookup table or a keyword classifier. It
-isn't. These notebooks open up a real, locally-run model and show the actual
-mechanics: tokenization, logits, softmax, the resulting probability
-distribution, and the decoding strategies (greedy decoding, sampling,
-temperature, top-k/top-p) that turn that distribution into generated text.
+How does it decide what comes next? Does it look something up in a
+drilling manual? Does it follow a rule about "POOH"? Does it "know" the
+bit is worn? And why might it give you a different answer if you run the
+exact same prompt again tomorrow?
 
-Every probability, logit, and token shown is read directly out of the loaded
-model. Nothing is hard-coded, simulated, or adjusted to produce a tidier-
-looking result.
+This project lets you look inside a real, locally-run language model and
+see what actually happens — using real drilling, completions, and
+well-intervention examples, with every number traceable back to the model
+itself. Nothing here is invented, simulated, or cleaned up to make the
+results look tidier than they are.
 
-## Notebooks in this series
-
-1. **`01_how_a_real_llm_predicts_the_next_token.ipynb`** — the next-token
-   prediction step only: prompt → tokenizer → logits → softmax → top
-   candidate tokens. Then compares oilfield contexts (e.g. why "POOH" alone
-   doesn't tell you what operation is happening) to show how context shifts
-   the distribution.
-2. **`02_temperature_sampling_and_decoding_strategies.ipynb`** — takes the
-   probability distribution from notebook 1 and shows how a token actually
-   gets selected from it: greedy decoding vs. sampling, temperature, top-k
-   and top-p (nucleus) sampling, and a small, fully transparent manual
-   generation loop that produces real multi-token oilfield completions.
-3. **`03_embeddings_and_attention.ipynb`** — opens the transformer box a
-   little further: real token embedding vectors and their cosine
-   similarities (including the honest finding that raw embeddings mostly
-   track spelling, not oilfield meaning), and real attention weights
-   extracted layer by layer, with an explicit, sustained caution against
-   treating attention as a causal explanation of a prediction.
-4. **`04_gradient_attribution_and_occlusion.ipynb`** — computes methods that
-   are mathematically tied to the model's actual output: gradient × input,
-   Integrated Gradients (validated first on a toy function with a known
-   exact answer, then checked against its own completeness guarantee on the
-   real model — a check it does not cleanly pass, reported honestly rather
-   than hidden), and direct occlusion. Compares all three, and states
-   plainly what none of them can establish on their own.
-5. **`05_activation_patching_and_causal_tracing.ipynb`** — intervenes
-   directly on the model's real, running computation: caches every
-   transformer layer's output on a "clean" run, corrupts a few token
-   embeddings with noise, then patches one (layer, position) at a time to
-   see how much of the original prediction gets causally restored. The
-   patching mechanism is validated first (a full patch reproduces the clean
-   run exactly), then a real 18×28 recovery heatmap shows where the model
-   causally relies on the corrupted information — cross-checked against a
-   freshly recomputed occlusion signal for the same prompt.
-6. **`06_probing_classifiers.ipynb`** — a genuinely different kind of
-   question and method: is the *category* of oilfield operation (drilling /
-   completions / logging / cleanout / fishing) linearly decodable from the
-   model's frozen internal representations, using labels defined by us, not
-   the model? Trains real linear probes at every layer on a self-built
-   labeled dataset, compares an easy naive-split evaluation against a
-   stricter phrase-held-out evaluation (revealing a real, measured
-   generalization gap in the middle layers that narrows by the final
-   layer), and is explicit that probing tests whether information is
-   *present*, not whether the model *uses* it.
-7. **`07_individual_head_circuit_analysis.ipynb`** — goes one level finer
-   than notebooks 3 and 5 combined: isolates and zero-ablates one
-   attention head at a time (out of 12 per layer, 336 total) to find which
-   single heads causally matter most for a prediction, validates the
-   ablation mechanism first (a no-op hook reproduces the clean run
-   exactly), then inspects the most important head's own un-averaged
-   attention pattern — finding, honestly, a real and interpretable
-   convergence between the causal and descriptive evidence for the main
-   prompt, and a real, very different result (an early-layer head
-   mattering far more) for a different prompt in the "try your own"
-   section, underscoring that these findings are prompt-specific rather
-   than universal.
-8. **`08_individual_neuron_analysis.ipynb`** — goes one level finer still:
-   an MLP layer has 8,960 "neurons," far too many to exhaustively ablate,
-   so this notebook screens all of them cheaply in one backward pass
-   (gradient x activation, notebook 4's method reused on internal neurons)
-   and validates only the top candidates with real ablation — catching, in
-   the process, a concrete case where the cheap screening overestimates a
-   real effect by roughly 4x (notebook 4's "saturation" caution, now
-   demonstrated with numbers). The confirmed top neuron is then interpreted
-   two independent ways: real ablation (prompt-specific) and a
-   prompt-*independent* "logit lens" projection of its learned output
-   weights straight to vocabulary space — which agree strikingly: the
-   neuron's direction ranks the target word dead last (151,936 out of
-   151,936) among every token in the vocabulary. A second example, found
-   fresh in the "try your own" section, shows the same method surfacing an
-   equally clean "install"-family promoter neuron on an unrelated prompt.
-
-Deeper interpretability methods (exhaustive multi-layer neuron search,
-multi-prompt circuit validation) are left for a possible future notebook so
-this series stays small, focused, and fully verifiable.
-
-## Target audience
-
-- Oil and gas engineers, operations staff, and managers with little or no
-  programming background who want an honest, concrete picture of what an LLM
-  actually does.
-- Data scientists who want a technically rigorous but visually simple
-  reference example using domain-realistic text.
-
-No machine learning background is assumed. Some comfort reading Python
-output (tables, simple charts) is helpful but not required.
-
-## What's in this repo
+Here's the very first real result you'll see, straight from the model,
+unfiltered:
 
 ```
-oilfield-llm-next-token-lab/
-├── notebooks/
-│   ├── 01_how_a_real_llm_predicts_the_next_token.ipynb
-│   ├── 02_temperature_sampling_and_decoding_strategies.ipynb
-│   ├── 03_embeddings_and_attention.ipynb
-│   ├── 04_gradient_attribution_and_occlusion.ipynb
-│   ├── 05_activation_patching_and_causal_tracing.ipynb
-│   ├── 06_probing_classifiers.ipynb
-│   ├── 07_individual_head_circuit_analysis.ipynb
-│   └── 08_individual_neuron_analysis.ipynb
-├── requirements.txt
-└── README.md
+Input:
+"The crew pulled out of hole with the worn PDC bit
+ and prepared to run a new ___"
+
+Real next-token candidates (from the actual model):
+
+ bit      ████████████████████████████████████  33.5%
+ one      ███████████████████████████████       27.8%
+ P        ████████                                7.5%
+ (space)  ███                                     2.5%
+ drill    ██                                      2.0%
 ```
+
+Notice "one" is almost as likely as "bit" — a real, slightly surprising
+result, not something anyone chose to show you. **These numbers are
+probabilities.** To see where they come from, and why they shift when you
+change the sentence, keep reading.
+
+## Two paths through this project
+
+| | Main path | Advanced path |
+|---|---|---|
+| **For** | Oil & gas engineers, operations staff, managers — no programming or ML background needed | Data scientists / ML practitioners who want to look inside the network's internals |
+| **Where** | `notebooks/` (2 notebooks) | `advanced/` (6 notebooks) |
+| **Time** | ~30–45 minutes | Several hours |
+| **Answers** | "What does the model actually do, and how do I use it well?" | "What's mechanistically happening inside, and how rigorously can we claim to know that?" |
+
+**If you're an oil & gas professional, you only need the main path.** The
+advanced path is real, technically rigorous interpretability research
+(attention, gradient attribution, activation patching, probing
+classifiers, individual attention heads and neurons) — genuinely
+interesting, but not required to get practical value from this project.
+See `advanced/README.md` for that path; the rest of this README is about
+the main path.
+
+## The main path: an oilfield professional's journey
+
+```
+1. What does an LLM actually do?
+        real oilfield sentence -> real model -> real next-token candidates
+   |
+2. Why does context matter?
+        "POOH" alone is ambiguous -- drilling vs. completions vs. intervention
+   |
+3. Why can the same question get a different answer?
+        greedy decoding vs. sampling, temperature, top-k / top-p
+   |
+4. Why can an LLM sound confident and still be wrong?          } planned --
+5. How do we make it safer for engineering use (grounding, RAG)? } not yet
+6. What should an engineer remember, day to day?                } built
+```
+
+Steps 1–3 are built today, as `notebooks/01_...` and
+`notebooks/02_...ipynb`. Steps 4–6 (probability vs. factual correctness,
+grounding answers in real engineering documents, and a practical rules
+summary) are a planned future addition to this project — not yet built —
+listed here so the intended shape of the full journey is clear.
+
+### Notebook 1: What does an LLM actually do, and why does context matter?
+
+`notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb`
+
+Walks through the real mechanics behind the teaser result above: your
+sentence gets broken into tokens, the model scores every possible next
+token, and those scores turn into the probabilities you saw. Then it uses
+oilfield's favorite ambiguous abbreviation — **POOH** ("pull out of
+hole"), which shows up in drilling, completions, logging, cleanouts, and
+fishing jobs alike — to show, with real numbers, how much the surrounding
+context changes what the model predicts. No made-up rule maps "POOH" to
+one category; you watch the real distribution shift as the sentence around
+it changes.
+
+**You'll be able to answer:** What is my sentence actually being turned
+into before the model sees it? Why might the model's "obvious" next word
+not be so obvious after all? Why does adding more context change the
+answer?
+
+### Notebook 2: Why can the same question get a different answer?
+
+`notebooks/02_temperature_sampling_and_decoding_strategies.ipynb`
+
+Takes the probabilities from notebook 1 and shows how one token actually
+gets chosen and turned into generated text: **greedy decoding** (always
+take the top answer — deterministic) versus **sampling** (draw randomly,
+weighted by probability — so a lower-probability word can still come out).
+Shows exactly what the "temperature" setting in any AI tool actually does
+to those real numbers, and what "top-k" / "top-p" mean when you see them
+in a model's settings.
+
+**You'll be able to answer:** Why did I get a different answer when I
+asked the same question twice? What does turning down an AI tool's
+"temperature" actually do? Is the model "guessing," and if so, how?
 
 ## Installation
 
@@ -143,173 +133,57 @@ oilfield-llm-next-token-lab/
 ```bash
 jupyter notebook notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
 jupyter notebook notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
-jupyter notebook notebooks/03_embeddings_and_attention.ipynb
-jupyter notebook notebooks/04_gradient_attribution_and_occlusion.ipynb
-jupyter notebook notebooks/05_activation_patching_and_causal_tracing.ipynb
-jupyter notebook notebooks/06_probing_classifiers.ipynb
-jupyter notebook notebooks/07_individual_head_circuit_analysis.ipynb
-jupyter notebook notebooks/08_individual_neuron_analysis.ipynb
 ```
 
-Each notebook runs independently, top to bottom — none require another
-notebook in the series to have been run first; each repeats the model-loading
-and helper-function setup it needs so it stands on its own. The first code
-cell that loads the model will download it from Hugging Face the first time
-you run any notebook; after that it's cached and reused. Note that notebooks
-3 and 7 load the same cached weights differently (`attn_implementation="eager"`,
-`float32`) than notebooks 1–2, for reasons explained in each notebook's own
-Section 2 — no extra download is needed, but they run somewhat slower as a
-result. Notebook 4 is also slower than notebooks 1–2: its Integrated
-Gradients sections each run dozens to hundreds of forward-and-backward
-passes, taking roughly a minute in total on Apple Silicon (longer on
-CPU-only machines). Notebook 5 runs a full grid of several hundred forward
-passes (one per token position x transformer layer) twice — once for the
-main prompt, once for the "try your own" section — each completing in under
-a minute on Apple Silicon. Notebook 6 additionally requires `scikit-learn`
-(included in `requirements.txt`) and builds its own small labeled dataset
-(240 sentences) before training linear probes; the whole notebook completes
-in well under a minute on Apple Silicon. Notebook 7 runs a full 28x12
-head-ablation grid (336 forward passes) twice — once for the main prompt,
-once for the "try your own" section — each completing in under 20 seconds
-on Apple Silicon. Notebook 8 is the fastest of the series: its screening
-step needs only one backward pass, its validation step only a handful of
-forward passes, and its logit-lens step no forward pass at all — the whole
-notebook completes in a few seconds.
+Run the cells in order, top to bottom, in either notebook — each stands on
+its own. The first code cell that loads the model will download it from
+Hugging Face the first time you run either one; after that it's cached and
+reused.
 
 ## Model and hardware expectations
 
 - **Model:** [`Qwen/Qwen2.5-1.5B-Instruct`](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct),
   an open-source instruction-tuned model, run entirely locally via Hugging
-  Face Transformers + PyTorch. No external API calls are made for inference.
+  Face Transformers + PyTorch. No external API calls are made for
+  inference — nothing you type leaves your machine.
 - **Download size:** approximately 3 GB (downloaded once, cached under
   `~/.cache/huggingface`).
 - **Hardware:** runs on a modern MacBook, including Apple Silicon (the
-  notebook automatically uses the `mps` backend when available), Intel Macs,
-  or any machine with a CUDA GPU. CPU-only execution also works — it's just
-  slower.
-- **Offline use:** after the first download, the notebook runs fully offline.
+  notebook automatically uses the `mps` backend when available), Intel
+  Macs, or any machine with a CUDA GPU. CPU-only execution also works —
+  it's just slower.
+- **Offline use:** after the first download, the notebook runs fully
+  offline.
 - If `Qwen2.5-1.5B-Instruct` fails to load in your environment for any
   reason, the notebook automatically falls back to a smaller sibling model
   and clearly reports which model actually ran — it will never silently
   substitute a model without telling you.
 
-## Learning objectives
+## What's in this repo
 
-After working through **notebook 1** you should be able to explain:
+```
+oilfield-llm-next-token-lab/
+├── notebooks/                                    <- main path, start here
+│   ├── 01_how_a_real_llm_predicts_the_next_token.ipynb
+│   └── 02_temperature_sampling_and_decoding_strategies.ipynb
+├── advanced/                                      <- optional, see advanced/README.md
+│   ├── README.md
+│   ├── 03_embeddings_and_attention.ipynb
+│   ├── 04_gradient_attribution_and_occlusion.ipynb
+│   ├── 05_activation_patching_and_causal_tracing.ipynb
+│   ├── 06_probing_classifiers.ipynb
+│   ├── 07_individual_head_circuit_analysis.ipynb
+│   └── 08_individual_neuron_analysis.ipynb
+├── requirements.txt
+└── README.md
+```
 
-1. What a language model actually predicts (tokens, not ideas).
-2. What a token is, and why it isn't the same thing as a word.
-3. What a logit is, and how it differs from a probability.
-4. How softmax converts logits into a probability distribution.
-5. What the real top candidate next tokens look like for an oilfield
-   sentence, straight from the model.
-6. Why changing the surrounding context (e.g. drilling vs. intervention)
-   changes the model's predictions — using "POOH" as the running example.
-7. Why this behavior can't be replicated with a simple keyword rule.
-8. Why we should avoid claiming to know exactly *why* an internal neural
-   network chose a particular token, and what we can and can't legitimately
-   infer from observed probability changes.
+## What this project promises
 
-After working through **notebook 2** you should additionally be able to
-explain:
-
-1. What greedy decoding is, and how it relates to `argmax`.
-2. What sampling is, and why the highest-probability token isn't guaranteed
-   to be picked.
-3. What temperature does mathematically to a distribution — and that it
-   reshapes the model's existing output rather than changing the model.
-4. What top-k and top-p (nucleus) sampling keep and discard, using the
-   model's real probabilities.
-5. How repeating a single decoding step, one token at a time, is what
-   generation actually is.
-
-After working through **notebook 3** you should additionally be able to
-explain:
-
-1. What a token embedding vector is, and what similarity between two
-   embeddings does (and does not) tell you.
-2. Why raw input-embedding nearest-neighbors often reflect spelling and
-   sub-word structure rather than oilfield meaning.
-3. What attention is, mechanically, inside a transformer layer.
-4. What real attention weights look like for an oilfield sentence, and how
-   they can differ across layers.
-5. Why "the model attended to X, therefore that's why it predicted Y" is an
-   overclaim, and what can be said more modestly instead.
-
-After working through **notebook 4** you should additionally be able to
-explain:
-
-1. What gradient-based attribution is, and how it's mathematically
-   connected to the model's output in a way attention isn't.
-2. What "gradient × input" measures, and its key limitation (saturation).
-3. What Integrated Gradients' completeness axiom claims, how to check it
-   with real numbers, and what it means when a theoretically well-motivated
-   method fails that check in practice.
-4. What occlusion-based attribution measures, and how it differs in kind
-   from gradient-based methods.
-5. Why these methods disagreeing with each other — and with attention from
-   notebook 3 — is expected, not a contradiction to explain away.
-
-After working through **notebook 5** you should additionally be able to
-explain:
-
-1. What activation patching is, and how it differs structurally from
-   gradient- and occlusion-based methods (it intervenes on the real
-   running computation rather than approximating or substituting inputs).
-2. Why corrupting with embedding noise, rather than substituting different
-   words, keeps position-by-position comparisons meaningful.
-3. What patching one layer's output at one token position actually does
-   inside a real forward pass, and how to validate that the mechanism is
-   working correctly before trusting its results.
-4. What a real position-by-layer recovery heatmap looks like, and what it
-   does and doesn't establish about where a model "uses" information.
-5. Why even a genuinely causal intervention like this doesn't fully explain
-   a prediction on its own.
-
-After working through **notebook 6** you should additionally be able to
-explain:
-
-1. What a probing classifier is, and why its "ground truth" label is
-   fundamentally different from every prior notebook's target (the model's
-   own prediction).
-2. Why probing accuracy measures whether information is linearly *present*
-   in a representation, not whether the model's own behavior *uses* it.
-3. Why testing a probe only on held-out examples that may share exact
-   wording with training data can overstate how well it generalizes — and
-   what a stricter, phrase-held-out test reveals instead.
-4. What a real probe-accuracy-by-layer curve looks like, and why it can
-   rise sharply at the very first transformer layer.
-5. Why a linear probe's failure at some layer doesn't prove information is
-   absent there.
-
-After working through **notebook 7** you should additionally be able to
-explain:
-
-1. How a single attention head's contribution can be isolated and removed
-   from a layer's computation, mechanically, inside a real forward pass.
-2. What a real layer-by-head ablation heatmap looks like, and why most
-   individual heads barely move a given prediction while a few matter far
-   more.
-3. Why agreement between a causal method (ablation) and a descriptive one
-   (that head's own attention pattern), found independently, is stronger
-   evidence than either alone.
-4. What it means for two important heads' effects to combine additively
-   versus interact, and why that has to be checked rather than assumed.
-5. Why a single-prompt case study like this one cannot, by itself,
-   establish a general "circuit" or mechanism.
-
-After working through **notebook 8** you should additionally be able to
-explain:
-
-1. Why some internal structures (thousands of MLP neurons per layer) are
-   too large to exhaustively search the way attention heads were, and what
-   a cheap-screen-then-validate strategy looks like instead.
-2. What "gradient x activation" screening estimates, and what it means,
-   concretely, when that linear estimate turns out to be substantially
-   wrong for the neuron that matters most.
-3. What a "logit lens" projection is, why it needs tied input/output
-   embeddings, and why it requires no forward pass on any prompt at all.
-4. Why agreement between a prompt-specific causal result and a
-   prompt-independent, weights-only result is especially strong evidence.
-5. Why a clean single-neuron story doesn't prove that neuron has one, and
-   only one, function across every context (polysemanticity).
+Every probability, logit, and token shown in the main path is read
+directly out of the loaded model — nothing is hard-coded, simulated, or
+adjusted to produce a tidier-looking result. If the model's real answer
+isn't the intuitive oilfield word, the notebooks show that honestly rather
+than filtering it out. **No AI or programming background is required for
+the main path** (notebooks 1–2). The advanced path assumes real ML/Python
+fluency — see `advanced/README.md`.
