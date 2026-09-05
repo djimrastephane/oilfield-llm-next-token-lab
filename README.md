@@ -52,10 +52,20 @@ looking result.
    run exactly), then a real 18×28 recovery heatmap shows where the model
    causally relies on the corrupted information — cross-checked against a
    freshly recomputed occlusion signal for the same prompt.
+6. **`06_probing_classifiers.ipynb`** — a genuinely different kind of
+   question and method: is the *category* of oilfield operation (drilling /
+   completions / logging / cleanout / fishing) linearly decodable from the
+   model's frozen internal representations, using labels defined by us, not
+   the model? Trains real linear probes at every layer on a self-built
+   labeled dataset, compares an easy naive-split evaluation against a
+   stricter phrase-held-out evaluation (revealing a real, measured
+   generalization gap in the middle layers that narrows by the final
+   layer), and is explicit that probing tests whether information is
+   *present*, not whether the model *uses* it.
 
-Deeper interpretability methods (probing classifiers, individual-head or
-individual-neuron circuit analysis) are left for a possible future notebook
-so this series stays small, focused, and fully verifiable.
+Deeper interpretability methods (individual-head or individual-neuron
+circuit analysis) are left for a possible future notebook so this series
+stays small, focused, and fully verifiable.
 
 ## Target audience
 
@@ -77,7 +87,8 @@ oilfield-llm-next-token-lab/
 │   ├── 02_temperature_sampling_and_decoding_strategies.ipynb
 │   ├── 03_embeddings_and_attention.ipynb
 │   ├── 04_gradient_attribution_and_occlusion.ipynb
-│   └── 05_activation_patching_and_causal_tracing.ipynb
+│   ├── 05_activation_patching_and_causal_tracing.ipynb
+│   └── 06_probing_classifiers.ipynb
 ├── requirements.txt
 └── README.md
 ```
@@ -106,6 +117,7 @@ jupyter notebook notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
 jupyter notebook notebooks/03_embeddings_and_attention.ipynb
 jupyter notebook notebooks/04_gradient_attribution_and_occlusion.ipynb
 jupyter notebook notebooks/05_activation_patching_and_causal_tracing.ipynb
+jupyter notebook notebooks/06_probing_classifiers.ipynb
 ```
 
 Each notebook runs independently, top to bottom — none require another
@@ -122,7 +134,10 @@ roughly a minute in total on Apple Silicon (longer on CPU-only machines).
 Notebook 5 runs a full grid of several hundred forward passes (one per
 token position x transformer layer) twice — once for the main prompt, once
 for the "try your own" section — each completing in under a minute on
-Apple Silicon.
+Apple Silicon. Notebook 6 additionally requires `scikit-learn` (included in
+`requirements.txt`) and builds its own small labeled dataset (240 sentences)
+before training linear probes; the whole notebook completes in well under a
+minute on Apple Silicon.
 
 ## Model and hardware expectations
 
@@ -213,3 +228,19 @@ explain:
    does and doesn't establish about where a model "uses" information.
 5. Why even a genuinely causal intervention like this doesn't fully explain
    a prediction on its own.
+
+After working through **notebook 6** you should additionally be able to
+explain:
+
+1. What a probing classifier is, and why its "ground truth" label is
+   fundamentally different from every prior notebook's target (the model's
+   own prediction).
+2. Why probing accuracy measures whether information is linearly *present*
+   in a representation, not whether the model's own behavior *uses* it.
+3. Why testing a probe only on held-out examples that may share exact
+   wording with training data can overstate how well it generalizes — and
+   what a stricter, phrase-held-out test reveals instead.
+4. What a real probe-accuracy-by-layer curve looks like, and why it can
+   rise sharply at the very first transformer layer.
+5. Why a linear probe's failure at some layer doesn't prove information is
+   absent there.
