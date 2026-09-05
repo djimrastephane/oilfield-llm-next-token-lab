@@ -74,10 +74,25 @@ looking result.
    mattering far more) for a different prompt in the "try your own"
    section, underscoring that these findings are prompt-specific rather
    than universal.
+8. **`08_individual_neuron_analysis.ipynb`** — goes one level finer still:
+   an MLP layer has 8,960 "neurons," far too many to exhaustively ablate,
+   so this notebook screens all of them cheaply in one backward pass
+   (gradient x activation, notebook 4's method reused on internal neurons)
+   and validates only the top candidates with real ablation — catching, in
+   the process, a concrete case where the cheap screening overestimates a
+   real effect by roughly 4x (notebook 4's "saturation" caution, now
+   demonstrated with numbers). The confirmed top neuron is then interpreted
+   two independent ways: real ablation (prompt-specific) and a
+   prompt-*independent* "logit lens" projection of its learned output
+   weights straight to vocabulary space — which agree strikingly: the
+   neuron's direction ranks the target word dead last (151,936 out of
+   151,936) among every token in the vocabulary. A second example, found
+   fresh in the "try your own" section, shows the same method surfacing an
+   equally clean "install"-family promoter neuron on an unrelated prompt.
 
-Deeper interpretability methods (individual-neuron analysis inside MLP
-layers, multi-prompt circuit validation) are left for a possible future
-notebook so this series stays small, focused, and fully verifiable.
+Deeper interpretability methods (exhaustive multi-layer neuron search,
+multi-prompt circuit validation) are left for a possible future notebook so
+this series stays small, focused, and fully verifiable.
 
 ## Target audience
 
@@ -101,7 +116,8 @@ oilfield-llm-next-token-lab/
 │   ├── 04_gradient_attribution_and_occlusion.ipynb
 │   ├── 05_activation_patching_and_causal_tracing.ipynb
 │   ├── 06_probing_classifiers.ipynb
-│   └── 07_individual_head_circuit_analysis.ipynb
+│   ├── 07_individual_head_circuit_analysis.ipynb
+│   └── 08_individual_neuron_analysis.ipynb
 ├── requirements.txt
 └── README.md
 ```
@@ -132,6 +148,7 @@ jupyter notebook notebooks/04_gradient_attribution_and_occlusion.ipynb
 jupyter notebook notebooks/05_activation_patching_and_causal_tracing.ipynb
 jupyter notebook notebooks/06_probing_classifiers.ipynb
 jupyter notebook notebooks/07_individual_head_circuit_analysis.ipynb
+jupyter notebook notebooks/08_individual_neuron_analysis.ipynb
 ```
 
 Each notebook runs independently, top to bottom — none require another
@@ -154,7 +171,10 @@ a minute on Apple Silicon. Notebook 6 additionally requires `scikit-learn`
 in well under a minute on Apple Silicon. Notebook 7 runs a full 28x12
 head-ablation grid (336 forward passes) twice — once for the main prompt,
 once for the "try your own" section — each completing in under 20 seconds
-on Apple Silicon.
+on Apple Silicon. Notebook 8 is the fastest of the series: its screening
+step needs only one backward pass, its validation step only a handful of
+forward passes, and its logit-lens step no forward pass at all — the whole
+notebook completes in a few seconds.
 
 ## Model and hardware expectations
 
@@ -277,3 +297,19 @@ explain:
    versus interact, and why that has to be checked rather than assumed.
 5. Why a single-prompt case study like this one cannot, by itself,
    establish a general "circuit" or mechanism.
+
+After working through **notebook 8** you should additionally be able to
+explain:
+
+1. Why some internal structures (thousands of MLP neurons per layer) are
+   too large to exhaustively search the way attention heads were, and what
+   a cheap-screen-then-validate strategy looks like instead.
+2. What "gradient x activation" screening estimates, and what it means,
+   concretely, when that linear estimate turns out to be substantially
+   wrong for the neuron that matters most.
+3. What a "logit lens" projection is, why it needs tied input/output
+   embeddings, and why it requires no forward pass on any prompt at all.
+4. Why agreement between a prompt-specific causal result and a
+   prompt-independent, weights-only result is especially strong evidence.
+5. Why a clean single-neuron story doesn't prove that neuron has one, and
+   only one, function across every context (polysemanticity).
