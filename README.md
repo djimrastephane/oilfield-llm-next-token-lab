@@ -43,10 +43,19 @@ looking result.
    real model — a check it does not cleanly pass, reported honestly rather
    than hidden), and direct occlusion. Compares all three, and states
    plainly what none of them can establish on their own.
+5. **`05_activation_patching_and_causal_tracing.ipynb`** — intervenes
+   directly on the model's real, running computation: caches every
+   transformer layer's output on a "clean" run, corrupts a few token
+   embeddings with noise, then patches one (layer, position) at a time to
+   see how much of the original prediction gets causally restored. The
+   patching mechanism is validated first (a full patch reproduces the clean
+   run exactly), then a real 18×28 recovery heatmap shows where the model
+   causally relies on the corrupted information — cross-checked against a
+   freshly recomputed occlusion signal for the same prompt.
 
-Deeper interpretability methods (activation patching, causal tracing,
-probing) are left for a possible future notebook so this series stays small,
-focused, and fully verifiable.
+Deeper interpretability methods (probing classifiers, individual-head or
+individual-neuron circuit analysis) are left for a possible future notebook
+so this series stays small, focused, and fully verifiable.
 
 ## Target audience
 
@@ -67,7 +76,8 @@ oilfield-llm-next-token-lab/
 │   ├── 01_how_a_real_llm_predicts_the_next_token.ipynb
 │   ├── 02_temperature_sampling_and_decoding_strategies.ipynb
 │   ├── 03_embeddings_and_attention.ipynb
-│   └── 04_gradient_attribution_and_occlusion.ipynb
+│   ├── 04_gradient_attribution_and_occlusion.ipynb
+│   └── 05_activation_patching_and_causal_tracing.ipynb
 ├── requirements.txt
 └── README.md
 ```
@@ -95,6 +105,7 @@ jupyter notebook notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
 jupyter notebook notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
 jupyter notebook notebooks/03_embeddings_and_attention.ipynb
 jupyter notebook notebooks/04_gradient_attribution_and_occlusion.ipynb
+jupyter notebook notebooks/05_activation_patching_and_causal_tracing.ipynb
 ```
 
 Each notebook runs independently, top to bottom — none require another
@@ -108,6 +119,10 @@ no extra download is needed, but it runs somewhat slower as a result.
 Notebook 4 is also slower than notebooks 1–2: its Integrated Gradients
 sections each run dozens to hundreds of forward-and-backward passes, taking
 roughly a minute in total on Apple Silicon (longer on CPU-only machines).
+Notebook 5 runs a full grid of several hundred forward passes (one per
+token position x transformer layer) twice — once for the main prompt, once
+for the "try your own" section — each completing in under a minute on
+Apple Silicon.
 
 ## Model and hardware expectations
 
@@ -182,3 +197,19 @@ explain:
    from gradient-based methods.
 5. Why these methods disagreeing with each other — and with attention from
    notebook 3 — is expected, not a contradiction to explain away.
+
+After working through **notebook 5** you should additionally be able to
+explain:
+
+1. What activation patching is, and how it differs structurally from
+   gradient- and occlusion-based methods (it intervenes on the real
+   running computation rather than approximating or substituting inputs).
+2. Why corrupting with embedding noise, rather than substituting different
+   words, keeps position-by-position comparisons meaningful.
+3. What patching one layer's output at one token position actually does
+   inside a real forward pass, and how to validate that the mechanism is
+   working correctly before trusting its results.
+4. What a real position-by-layer recovery heatmap looks like, and what it
+   does and doesn't establish about where a model "uses" information.
+5. Why even a genuinely causal intervention like this doesn't fully explain
+   a prediction on its own.
