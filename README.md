@@ -114,15 +114,36 @@ asked the same question twice? What does turning down an AI tool's
 
 ## Installation
 
+Works on **macOS, Windows, and Linux** — the steps are the same except for
+one command when you activate the virtual environment.
+
 1. Make sure you have Python 3.10+ installed.
-2. From the repo root, create and activate a virtual environment:
+2. From the repo root, create a virtual environment:
 
    ```bash
    python3 -m venv .venv
+   ```
+
+   (On Windows, if `python3` isn't recognized, use `python` instead.)
+
+3. Activate it:
+
+   **macOS / Linux:**
+   ```bash
    source .venv/bin/activate
    ```
 
-3. Install dependencies:
+   **Windows (Command Prompt):**
+   ```bat
+   .venv\Scripts\activate
+   ```
+
+   **Windows (PowerShell):**
+   ```powershell
+   .venv\Scripts\Activate.ps1
+   ```
+
+4. Install dependencies:
 
    ```bash
    pip install -r requirements.txt
@@ -146,12 +167,16 @@ reused.
   an open-source instruction-tuned model, run entirely locally via Hugging
   Face Transformers + PyTorch. No external API calls are made for
   inference — nothing you type leaves your machine.
-- **Download size:** approximately 3 GB (downloaded once, cached under
-  `~/.cache/huggingface`).
-- **Hardware:** runs on a modern MacBook, including Apple Silicon (the
-  notebook automatically uses the `mps` backend when available), Intel
-  Macs, or any machine with a CUDA GPU. CPU-only execution also works —
-  it's just slower.
+- **Download size:** approximately 3 GB, downloaded once and cached in
+  your user folder (`~/.cache/huggingface` on macOS/Linux;
+  `C:\Users\<you>\.cache\huggingface` on Windows) — you won't need to
+  manage this yourself, it's handled automatically.
+- **Hardware:** works on Mac, Windows, or Linux. The notebook automatically
+  detects and uses whichever is fastest on your machine — an Apple Silicon
+  Mac's built-in GPU, an NVIDIA GPU (common on Windows and Linux
+  desktops/laptops), or, if neither is present, your regular processor
+  (CPU). No GPU is required — CPU-only execution works fine on any modern
+  laptop, just somewhat slower.
 - **Offline use:** after the first download, the notebook runs fully
   offline.
 - If `Qwen2.5-1.5B-Instruct` fails to load in your environment for any
