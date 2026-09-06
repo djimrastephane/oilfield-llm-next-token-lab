@@ -303,6 +303,17 @@ notebooks needs.
   an open-source instruction-tuned model, run entirely locally via Hugging
   Face Transformers + PyTorch. No external API calls are made for
   inference — nothing you type leaves your machine.
+- **This specific model isn't a requirement.** It's simply what this
+  tutorial was built and verified against, chosen because it's small
+  enough to run on an ordinary laptop. Nothing in the mechanics taught
+  here (tokenization, softmax, decoding, grounding, and so on) is
+  specific to this one model — you're free to point `PRIMARY_MODEL_NAME`
+  at a different Hugging Face model your hardware can handle. Just don't
+  expect identical numbers: next-token probabilities depend on what a
+  model was actually trained on, so a different model can reasonably
+  produce a different top candidate, a different generated sentence, or a
+  different guess for notebook 3's fictional well. That's not a bug —
+  it's the same lesson these notebooks teach, playing out on a new model.
 - **Download size:** approximately 3 GB, downloaded once and cached in
   your user folder (`~/.cache/huggingface` on macOS/Linux;
   `C:\Users\<you>\.cache\huggingface` on Windows) — you won't need to
