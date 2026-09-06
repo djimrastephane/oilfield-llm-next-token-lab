@@ -227,9 +227,14 @@ from a local run exactly. A few things to expect, honestly:
 ### Local: run everything on your own computer
 
 Nothing you type leaves your machine — the most private option, and the
-one used for every real result and screenshot in this README. Works on
-**macOS, Windows, and Linux**; the steps are the same except for one
-command when you activate the virtual environment.
+one used for every real result in this README. The setup below has the
+same steps on **macOS, Windows, and Linux**, except for one command when
+you activate the virtual environment — but honestly, every real result in
+this README was actually generated on macOS specifically. Windows and
+Linux run the identical code path (standard Python, PyTorch, and Jupyter,
+with no OS-specific logic beyond that one activation command), but
+haven't been independently re-verified end to end on this project's side.
+If you hit a platform-specific snag, please open a GitHub issue.
 
 1. Make sure you have Python 3.10+ installed.
 2. From the repo root, create a virtual environment:
@@ -302,12 +307,13 @@ notebooks needs.
   your user folder (`~/.cache/huggingface` on macOS/Linux;
   `C:\Users\<you>\.cache\huggingface` on Windows) — you won't need to
   manage this yourself, it's handled automatically.
-- **Hardware:** works on Mac, Windows, or Linux. The notebook automatically
-  detects and uses whichever is fastest on your machine — an Apple Silicon
-  Mac's built-in GPU, an NVIDIA GPU (common on Windows and Linux
-  desktops/laptops), or, if neither is present, your regular processor
-  (CPU). No GPU is required — CPU-only execution works fine on any modern
-  laptop, just somewhat slower.
+- **Hardware:** the notebook automatically detects and uses whichever is
+  fastest on your machine — an Apple Silicon Mac's built-in GPU, an
+  NVIDIA GPU (common on Windows and Linux desktops/laptops), or, if
+  neither is present, your regular processor (CPU) — on any of macOS,
+  Windows, or Linux (see the note above on what's actually been tested
+  on each). No GPU is required — CPU-only execution works fine on any
+  modern laptop, just somewhat slower.
 - **Offline use:** after the first download, the notebook runs fully
   offline.
 - If `Qwen2.5-1.5B-Instruct` fails to load in your environment for any
