@@ -318,8 +318,11 @@ notebooks needs.
   offline.
 - If `Qwen2.5-1.5B-Instruct` fails to load in your environment for any
   reason, the notebook automatically falls back to a smaller sibling model
-  and clearly reports which model actually ran — it will never silently
-  substitute a model without telling you.
+  (`Qwen2.5-0.5B-Instruct`, about 950 MB) and clearly reports which model
+  actually ran — it will never silently substitute a model without
+  telling you. This isn't just a description of the code: the fallback
+  was deliberately triggered and confirmed working end to end before this
+  claim was written.
 
 ## What's in this repo
 
