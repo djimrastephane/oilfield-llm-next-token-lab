@@ -10,10 +10,14 @@ bit is worn? And why might it give you a different answer if you run the
 exact same prompt again tomorrow?
 
 This project lets you look inside a real, locally-run language model and
-see what actually happens — using real drilling, completions, and
-well-intervention examples, with every number traceable back to the model
-itself. Nothing here is invented, simulated, or cleaned up to make the
-results look tidier than they are.
+see what actually happens — using drilling, completions, and
+well-intervention examples. **Every number and every word the model
+produces is real** — read live from the actual model, never invented,
+simulated, or cleaned up to make the results look tidier than they are.
+The *scenarios* themselves are sometimes deliberately fictional (a made-up
+well name, an invented company document) so the lesson works without
+needing anyone's real, private data — every notebook says so plainly,
+right where it happens, the moment it happens.
 
 Here's the very first real result you'll see, straight from the model,
 unfiltered:
@@ -335,6 +339,46 @@ notebooks needs.
   telling you. This isn't just a description of the code: the fallback
   was deliberately triggered and confirmed working end to end before this
   claim was written.
+- **Model revision:** every notebook pins the exact model commit it
+  loads (`revision=...`, set once near the top of each notebook), rather
+  than silently tracking whatever the "main" branch happens to be on
+  Hugging Face when you run it. If Qwen ever updates these weights, this
+  project's real numbers won't silently drift out from under you.
+
+## Reproducibility
+
+Every real number in this project came from an actual run, on real
+hardware, that was checked before being written down — not assumed. Here
+is exactly what "checked" means:
+
+- **Exact tested environment:** Python 3.12.13, PyTorch 2.14.0,
+  Transformers 5.16.1, on an Apple Silicon Mac (`mps` backend, the
+  device this project's numbers were generated on). Every notebook's own
+  "Technical appendix" section prints these same version numbers live,
+  for the environment you're actually running in — so you can always
+  check your own setup against this one directly, without taking our
+  word for it.
+- **Also verified on Google Colab's free tier:** a T4 GPU runtime
+  (`cuda` backend), Python 3.13.15, PyTorch 2.11.0+cu128, Transformers
+  5.16.1 — a different OS, a different GPU vendor, and a different
+  PyTorch build than the environment above.
+- **Do outputs match exactly across backends? Checked directly, and the
+  honest answer is: mostly, with one real exception.** Notebooks 4 and 5
+  specifically (see the Colab section above) were checked output-by-output
+  against a local run and matched **bit-for-bit** — same tokens, same
+  probabilities, down to the displayed decimal; the other main-path
+  notebooks ran cleanly on both backends but weren't compared at that same
+  decimal-level precision. The two heaviest advanced notebooks (7 and 8),
+  which each aggregate results across hundreds or thousands of tiny
+  numerical comparisons, showed **small floating-point differences between
+  backends** in some displayed values when checked the same way — for
+  example, notebook 8's clean-prediction probability read 33.5% locally
+  and 33.8% on Colab's GPU. This did not change either notebook's real
+  conclusion (the exact same neuron and layer were identified as most
+  important on both backends) — but it's a real, observed difference, not
+  a hypothetical one, and it's the kind of thing you should expect if you
+  re-run this project on your own hardware and compare decimal places
+  closely.
 
 ## What's in this repo
 
@@ -356,8 +400,20 @@ oilfield-llm-next-token-lab/
 │   ├── 08_individual_neuron_analysis.ipynb
 │   ├── 09_grounding_answers_in_real_documents.ipynb
 │   └── 10_day_to_day_rules_for_using_ai_tools.ipynb
+├── scripts/
+│   └── check_notebooks.py                        <- structural smoke test, no model needed
 ├── requirements.txt
+├── LICENSE
 └── README.md
+```
+
+Before committing a notebook change, run the smoke test —
+it parses every notebook, checks every code cell is valid Python, and
+checks that numbered sections and cross-references line up, all without
+downloading or loading the model:
+
+```bash
+python3 scripts/check_notebooks.py
 ```
 
 ## What this project promises
