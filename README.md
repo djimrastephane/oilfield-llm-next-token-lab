@@ -42,8 +42,8 @@ change the sentence, keep reading.
 | | Main path | Advanced path |
 |---|---|---|
 | **For** | Oil & gas engineers, operations staff, managers — no programming or ML background needed | Data scientists / ML practitioners who want to look inside the network's internals |
-| **Where** | `notebooks/` (2 notebooks) | `advanced/` (6 notebooks) |
-| **Time** | ~30–45 minutes | Several hours |
+| **Where** | `notebooks/` (3 notebooks) | `advanced/` (6 notebooks) |
+| **Time** | ~45–60 minutes | Several hours |
 | **Answers** | "What does the model actually do, and how do I use it well?" | "What's mechanistically happening inside, and how rigorously can we claim to know that?" |
 
 **If you're an oil & gas professional, you only need the main path.** The
@@ -66,16 +66,19 @@ the main path.
 3. Why can the same question get a different answer?
         greedy decoding vs. sampling, temperature, top-k / top-p
    |
-4. Why can an LLM sound confident and still be wrong?          } planned --
-5. How do we make it safer for engineering use (grounding, RAG)? } not yet
-6. What should an engineer remember, day to day?                } built
+4. Does a high probability mean the answer is correct?
+        NO -- a fluent, confident, specific number can still be made up
+   |
+5. How do we make it safer for engineering use (grounding, RAG)? } planned
+6. What should an engineer remember, day to day?                } not yet
+                                                                  } built
 ```
 
-Steps 1–3 are built today, as `notebooks/01_...` and
-`notebooks/02_...ipynb`. Steps 4–6 (probability vs. factual correctness,
-grounding answers in real engineering documents, and a practical rules
-summary) are a planned future addition to this project — not yet built —
-listed here so the intended shape of the full journey is clear.
+Steps 1–4 are built today, as `notebooks/01_...`, `notebooks/02_...ipynb`,
+and `notebooks/03_...ipynb`. Steps 5–6 (grounding answers in real
+engineering documents with citations, and a practical rules summary) are a
+planned future addition to this project — not yet built — listed here so
+the intended shape of the full journey is clear.
 
 ### Notebook 1: What does an LLM actually do, and why does context matter?
 
@@ -112,6 +115,25 @@ in a model's settings.
 asked the same question twice? What does turning down an AI tool's
 "temperature" actually do? Is the model "guessing," and if so, how?
 
+### Notebook 3: Does a high probability mean the answer is correct?
+
+`notebooks/03_does_high_probability_mean_correct.ipynb`
+
+The most consequential lesson in the series for actual work use. Watches
+the real model write a confident-sounding field note with a specific
+pressure test value for a completely fictional well, then runs the real
+test that matters: does that number change when nothing relevant about
+the question does? (It does — real result, shown honestly.) Then checks
+whether this only happens with made-up scenarios, using a genuinely
+well-established industry fact (one barrel of oil = 42 US gallons) —
+and finds that even that can come out wrong depending only on how the
+question is phrased.
+
+**You'll be able to answer:** Can an AI tool sound completely confident
+and still be wrong? How would I even test that, myself, on my own
+questions? What should I actually verify before trusting a specific
+number an AI tool gives me?
+
 ## How to run: three ways, pick what fits you
 
 ### Easiest: open in Google Colab — no installation at all
@@ -124,6 +146,9 @@ Google server. Nothing to install on your own computer.
 
 [![Open Notebook 2 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/djimrastephane/oilfield-llm-next-token-lab/blob/main/notebooks/02_temperature_sampling_and_decoding_strategies.ipynb)
 **Notebook 2** — Why can the same question get a different answer?
+
+[![Open Notebook 3 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/djimrastephane/oilfield-llm-next-token-lab/blob/main/notebooks/03_does_high_probability_mean_correct.ipynb)
+**Notebook 3** — Does a high probability mean the answer is correct?
 
 This was tested end to end before being added here: on Colab's free tier,
 downloading the ~3 GB model took under a minute (Colab's connection is
@@ -187,9 +212,10 @@ command when you activate the virtual environment.
    ```bash
    jupyter notebook notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
    jupyter notebook notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
+   jupyter notebook notebooks/03_does_high_probability_mean_correct.ipynb
    ```
 
-Run the cells in order, top to bottom, in either notebook — each stands on
+Run the cells in order, top to bottom, in any notebook — each stands on
 its own. The first code cell that loads the model will download it from
 Hugging Face the first time you run either one; after that it's cached and
 reused.
@@ -236,7 +262,8 @@ each of those six notebooks needs.
 oilfield-llm-next-token-lab/
 ├── notebooks/                                    <- main path, start here
 │   ├── 01_how_a_real_llm_predicts_the_next_token.ipynb
-│   └── 02_temperature_sampling_and_decoding_strategies.ipynb
+│   ├── 02_temperature_sampling_and_decoding_strategies.ipynb
+│   └── 03_does_high_probability_mean_correct.ipynb
 ├── advanced/                                      <- optional, see advanced/README.md
 │   ├── README.md
 │   ├── 03_embeddings_and_attention.ipynb
@@ -256,6 +283,6 @@ directly out of the loaded model — nothing is hard-coded, simulated, or
 adjusted to produce a tidier-looking result. If the model's real answer
 isn't the intuitive oilfield word, the notebooks show that honestly rather
 than filtering it out. **No AI or programming background is required for
-the main path** (notebooks 1–2) — the Colab option above means you don't
+the main path** (notebooks 1–3) — the Colab option above means you don't
 even need to install anything to see that for yourself. The advanced path
 assumes real ML/Python fluency — see `advanced/README.md`.
