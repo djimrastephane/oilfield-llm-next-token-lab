@@ -1,5 +1,5 @@
 torch
-transformers
+transformers>=4.56.0  # from_pretrained(..., dtype=...) requires 4.56+; older versions only accept torch_dtype=
 accelerate
 pandas
 matplotlib
