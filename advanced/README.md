@@ -6,8 +6,9 @@ to get practical value from the main, five-notebook series in
 `../notebooks/`, which is complete on its own: it runs from "what does an
 LLM actually do?" through decoding strategies, why confident answers can
 still be wrong, grounding answers in real documents (RAG), and a
-practical day-to-day rules summary. See the top-level
-[README](../README.md) for that series.
+practical day-to-day rules summary. See the top-level README's
+[six-part journey](../README.md#the-main-path-an-oilfield-professionals-journey)
+for that series.
 
 Where the main path answers "what happens, and how do I use it well?", this
 path answers "what's actually going on inside the network, and how
@@ -54,8 +55,9 @@ comfort reading logits, gradients, and linear algebra notation.
 
 ## How to run
 
-Same environment as the main path — see the top-level
-[README](../README.md) for installation. `06_probing_classifiers.ipynb`
+Same environment as the main path — see the top-level README's
+[How to run](../README.md#how-to-run-three-ways-pick-what-fits-you)
+section for installation. `06_probing_classifiers.ipynb`
 additionally needs `scikit-learn` (already listed in `requirements.txt`).
 Each notebook runs independently, top to bottom. Notebooks 3 and 7 load the
 model differently (`attn_implementation="eager"`, `float32`) than the rest,
