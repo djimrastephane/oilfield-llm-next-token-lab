@@ -51,8 +51,8 @@ advanced path is real, technically rigorous interpretability research
 (attention, gradient attribution, activation patching, probing
 classifiers, individual attention heads and neurons) — genuinely
 interesting, but not required to get practical value from this project.
-See `advanced/README.md` for that path; the rest of this README is about
-the main path.
+See [`advanced/README.md`](advanced/README.md) for that path; the rest of
+this README is about the main path.
 
 ## The main path: an oilfield professional's journey
 
@@ -156,6 +156,14 @@ assuming).
 fact, can it still get it right when the fact is put in front of it? Where
 does the right document actually come from? Does grounding guarantee a
 correct answer, or can it still fail — and how?
+
+This notebook's retrieval step deliberately uses simple word-counting,
+not "embeddings," so every step stays visible. If you're curious how a
+real meaning-based (embedding) search actually performs on oilfield
+language instead, see the advanced path's
+[`03_embeddings_and_attention.ipynb`](advanced/03_embeddings_and_attention.ipynb)
+— it tests that directly on this same model, with real results, including
+where it falls short.
 
 ### Notebook 5: Day-to-day rules for using an AI tool at work
 
@@ -280,8 +288,9 @@ git clone https://github.com/djimrastephane/oilfield-llm-next-token-lab.git
 cd oilfield-llm-next-token-lab
 ```
 
-Then follow the **Local** steps above. See `advanced/README.md` for what
-each of those six notebooks needs.
+Then follow the **Local** steps above. See
+[`advanced/README.md`](advanced/README.md) for what each of those six
+notebooks needs.
 
 ## Model and hardware expectations
 
@@ -337,4 +346,4 @@ isn't the intuitive oilfield word, the notebooks show that honestly rather
 than filtering it out. **No AI or programming background is required for
 the main path** (notebooks 1–5) — the Colab option above means you don't
 even need to install anything to see that for yourself. The advanced path
-assumes real ML/Python fluency — see `advanced/README.md`.
+assumes real ML/Python fluency — see [`advanced/README.md`](advanced/README.md).
