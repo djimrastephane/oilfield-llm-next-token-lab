@@ -2,7 +2,12 @@
 
 **This folder is optional.** It's for data scientists and ML practitioners
 who want to look inside a real language model's internals — not required
-to get practical value from the main two-notebook series in `../notebooks/`.
+to get practical value from the main, five-notebook series in
+`../notebooks/`, which is complete on its own: it runs from "what does an
+LLM actually do?" through decoding strategies, why confident answers can
+still be wrong, grounding answers in real documents (RAG), and a
+practical day-to-day rules summary. See the top-level
+[README](../README.md) for that series.
 
 Where the main path answers "what happens, and how do I use it well?", this
 path answers "what's actually going on inside the network, and how
@@ -20,7 +25,9 @@ comfort reading logits, gradients, and linear algebra notation.
 
 1. **`03_embeddings_and_attention.ipynb`** — real token embedding vectors
    and their cosine similarities (a genuinely useful connection to
-   semantic search / RAG, plus the honest finding that raw embeddings
+   semantic search / RAG — see the main path's
+   [`04_grounding_answers_in_real_documents.ipynb`](../notebooks/04_grounding_answers_in_real_documents.ipynb)
+   for the practical version — plus the honest finding that raw embeddings
    mostly track spelling, not oilfield meaning), and real per-layer
    attention weights, with a sustained caution against treating attention
    as a causal explanation.
