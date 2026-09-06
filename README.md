@@ -42,7 +42,7 @@ change the sentence, keep reading.
 | | Main path | Advanced path |
 |---|---|---|
 | **For** | Oil & gas engineers, operations staff, managers — no programming or ML background needed | Data scientists / ML practitioners who want to look inside the network's internals |
-| **Where** | `notebooks/` (5 notebooks) | `advanced/` (6 notebooks) |
+| **Where** | `notebooks/` (5 notebooks) | `advanced/` (8 notebooks) |
 | **Time** | ~70–90 minutes | Several hours |
 | **Answers** | "What does the model actually do, and how do I use it well?" | "What's mechanistically happening inside, and how rigorously can we claim to know that?" |
 
@@ -289,7 +289,7 @@ cd oilfield-llm-next-token-lab
 ```
 
 Then follow the **Local** steps above. See
-[`advanced/README.md`](advanced/README.md) for what each of those six
+[`advanced/README.md`](advanced/README.md) for what each of those eight
 notebooks needs.
 
 ## Model and hardware expectations
@@ -332,7 +332,9 @@ oilfield-llm-next-token-lab/
 │   ├── 05_activation_patching_and_causal_tracing.ipynb
 │   ├── 06_probing_classifiers.ipynb
 │   ├── 07_individual_head_circuit_analysis.ipynb
-│   └── 08_individual_neuron_analysis.ipynb
+│   ├── 08_individual_neuron_analysis.ipynb
+│   ├── 09_grounding_answers_in_real_documents.ipynb
+│   └── 10_day_to_day_rules_for_using_ai_tools.ipynb
 ├── requirements.txt
 └── README.md
 ```

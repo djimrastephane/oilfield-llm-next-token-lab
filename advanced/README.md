@@ -53,6 +53,20 @@ comfort reading logits, gradients, and linear algebra notation.
    ablation, and interprets the winner two independent ways (causal
    ablation and a prompt-free "logit lens" projection) — which agree.
 
+The two below are exact copies of the main path's closing notebooks,
+included here too for completeness. They're not written at this folder's
+technical level — see items 1-6 above for that.
+
+7. **`09_grounding_answers_in_real_documents.ipynb`** — identical to the
+   main path's
+   [`04_grounding_answers_in_real_documents.ipynb`](../notebooks/04_grounding_answers_in_real_documents.ipynb):
+   grounding answers in real documents (RAG) with a simple, fully-visible
+   keyword-overlap retrieval step.
+8. **`10_day_to_day_rules_for_using_ai_tools.ipynb`** — identical to the
+   main path's
+   [`05_day_to_day_rules_for_using_ai_tools.ipynb`](../notebooks/05_day_to_day_rules_for_using_ai_tools.ipynb):
+   the five-rule, day-to-day summary that closes out the main path.
+
 ## How to run
 
 Same environment as the main path — see the top-level README's
