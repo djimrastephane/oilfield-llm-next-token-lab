@@ -42,8 +42,8 @@ change the sentence, keep reading.
 | | Main path | Advanced path |
 |---|---|---|
 | **For** | Oil & gas engineers, operations staff, managers — no programming or ML background needed | Data scientists / ML practitioners who want to look inside the network's internals |
-| **Where** | `notebooks/` (3 notebooks) | `advanced/` (6 notebooks) |
-| **Time** | ~45–60 minutes | Several hours |
+| **Where** | `notebooks/` (4 notebooks) | `advanced/` (6 notebooks) |
+| **Time** | ~60–75 minutes | Several hours |
 | **Answers** | "What does the model actually do, and how do I use it well?" | "What's mechanistically happening inside, and how rigorously can we claim to know that?" |
 
 **If you're an oil & gas professional, you only need the main path.** The
@@ -69,16 +69,17 @@ the main path.
 4. Does a high probability mean the answer is correct?
         NO -- a fluent, confident, specific number can still be made up
    |
-5. How do we make it safer for engineering use (grounding, RAG)? } planned
-6. What should an engineer remember, day to day?                } not yet
-                                                                  } built
+5. How do we make it safer for engineering use (grounding, RAG)?
+        give the model the real document -> it reads instead of guesses
+   |
+6. What should an engineer remember, day to day?   } planned, not yet built
 ```
 
-Steps 1–4 are built today, as `notebooks/01_...`, `notebooks/02_...ipynb`,
-and `notebooks/03_...ipynb`. Steps 5–6 (grounding answers in real
-engineering documents with citations, and a practical rules summary) are a
-planned future addition to this project — not yet built — listed here so
-the intended shape of the full journey is clear.
+Steps 1–5 are built today, as `notebooks/01_...`, `notebooks/02_...ipynb`,
+`notebooks/03_...ipynb`, and `notebooks/04_...ipynb`. Step 6 (a practical,
+day-to-day rules summary) is a planned future addition to this project —
+not yet built — listed here so the intended shape of the full journey is
+clear.
 
 ### Notebook 1: What does an LLM actually do, and why does context matter?
 
@@ -134,6 +135,29 @@ and still be wrong? How would I even test that, myself, on my own
 questions? What should I actually verify before trusting a specific
 number an AI tool gives me?
 
+### Notebook 4: Grounding answers in real documents (RAG)
+
+`notebooks/04_grounding_answers_in_real_documents.ipynb`
+
+The fix for what notebook 3 found. Instead of asking the real model to
+recall a fact, this notebook shows it a real reference document and lets
+it read the answer off the page instead — and proves, live, that this
+turns a guess into a correct, checkable answer. Then it builds a small,
+fully-visible retrieval step (no hidden "embeddings" — just counting
+shared words) that automatically finds the right document out of several,
+wires it together into a real, working retrieve-then-answer pipeline
+(RAG), and honestly tests two ways it can still go wrong: being handed
+the *wrong* document (the model repeats the wrong number just as
+confidently), and having *no* matching document at all (compares a plain
+prompt against one that explicitly tells the model to admit when
+information is missing, and reports what actually happened rather than
+assuming).
+
+**You'll be able to answer:** If the model can't be trusted to recall a
+fact, can it still get it right when the fact is put in front of it? Where
+does the right document actually come from? Does grounding guarantee a
+correct answer, or can it still fail — and how?
+
 ## How to run: three ways, pick what fits you
 
 ### Easiest: open in Google Colab — no installation at all
@@ -150,10 +174,15 @@ Google server. Nothing to install on your own computer.
 [![Open Notebook 3 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/djimrastephane/oilfield-llm-next-token-lab/blob/main/notebooks/03_does_high_probability_mean_correct.ipynb)
 **Notebook 3** — Does a high probability mean the answer is correct?
 
-This was tested end to end before being added here: on Colab's free tier,
-downloading the ~3 GB model took under a minute (Colab's connection is
-much faster than a typical home connection), and the whole notebook ran
-without any errors or code changes. A few things to expect, honestly:
+[![Open Notebook 4 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/djimrastephane/oilfield-llm-next-token-lab/blob/main/notebooks/04_grounding_answers_in_real_documents.ipynb)
+**Notebook 4** — Grounding answers in real documents (RAG)
+
+Every notebook above was tested end to end on Colab's free tier before
+being added here: on a T4 GPU runtime, downloading the ~3 GB model took
+under a minute (Colab's connection is much faster than a typical home
+connection), and each notebook ran without any errors or code changes —
+notebook 4's real, live outputs on Colab's GPU matched the ones from a
+local run exactly. A few things to expect, honestly:
 
 - The first time you open the link, Colab shows a one-time warning that
   the notebook wasn't authored by Google, since it's loading from GitHub.
@@ -213,6 +242,7 @@ command when you activate the virtual environment.
    jupyter notebook notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
    jupyter notebook notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
    jupyter notebook notebooks/03_does_high_probability_mean_correct.ipynb
+   jupyter notebook notebooks/04_grounding_answers_in_real_documents.ipynb
    ```
 
 Run the cells in order, top to bottom, in any notebook — each stands on
@@ -263,7 +293,8 @@ oilfield-llm-next-token-lab/
 ├── notebooks/                                    <- main path, start here
 │   ├── 01_how_a_real_llm_predicts_the_next_token.ipynb
 │   ├── 02_temperature_sampling_and_decoding_strategies.ipynb
-│   └── 03_does_high_probability_mean_correct.ipynb
+│   ├── 03_does_high_probability_mean_correct.ipynb
+│   └── 04_grounding_answers_in_real_documents.ipynb
 ├── advanced/                                      <- optional, see advanced/README.md
 │   ├── README.md
 │   ├── 03_embeddings_and_attention.ipynb
@@ -283,6 +314,6 @@ directly out of the loaded model — nothing is hard-coded, simulated, or
 adjusted to produce a tidier-looking result. If the model's real answer
 isn't the intuitive oilfield word, the notebooks show that honestly rather
 than filtering it out. **No AI or programming background is required for
-the main path** (notebooks 1–3) — the Colab option above means you don't
+the main path** (notebooks 1–4) — the Colab option above means you don't
 even need to install anything to see that for yourself. The advanced path
 assumes real ML/Python fluency — see `advanced/README.md`.
