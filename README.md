@@ -42,8 +42,8 @@ change the sentence, keep reading.
 | | Main path | Advanced path |
 |---|---|---|
 | **For** | Oil & gas engineers, operations staff, managers — no programming or ML background needed | Data scientists / ML practitioners who want to look inside the network's internals |
-| **Where** | `notebooks/` (4 notebooks) | `advanced/` (6 notebooks) |
-| **Time** | ~60–75 minutes | Several hours |
+| **Where** | `notebooks/` (5 notebooks) | `advanced/` (6 notebooks) |
+| **Time** | ~70–90 minutes | Several hours |
 | **Answers** | "What does the model actually do, and how do I use it well?" | "What's mechanistically happening inside, and how rigorously can we claim to know that?" |
 
 **If you're an oil & gas professional, you only need the main path.** The
@@ -72,14 +72,13 @@ the main path.
 5. How do we make it safer for engineering use (grounding, RAG)?
         give the model the real document -> it reads instead of guesses
    |
-6. What should an engineer remember, day to day?   } planned, not yet built
+6. What should an engineer remember, day to day?
+        the four real findings above, turned into five practical rules
 ```
 
-Steps 1–5 are built today, as `notebooks/01_...`, `notebooks/02_...ipynb`,
-`notebooks/03_...ipynb`, and `notebooks/04_...ipynb`. Step 6 (a practical,
-day-to-day rules summary) is a planned future addition to this project —
-not yet built — listed here so the intended shape of the full journey is
-clear.
+All six steps are built today, as `notebooks/01_...`, `notebooks/02_...ipynb`,
+`notebooks/03_...ipynb`, `notebooks/04_...ipynb`, and `notebooks/05_...ipynb`.
+The main path is complete — see below for what each notebook covers.
 
 ### Notebook 1: What does an LLM actually do, and why does context matter?
 
@@ -158,6 +157,23 @@ fact, can it still get it right when the fact is put in front of it? Where
 does the right document actually come from? Does grounding guarantee a
 correct answer, or can it still fail — and how?
 
+### Notebook 5: Day-to-day rules for using an AI tool at work
+
+`notebooks/05_day_to_day_rules_for_using_ai_tools.ipynb`
+
+The capstone. No new theory — it pulls the four real findings from
+notebooks 1-4 together into five practical rules, then applies the last
+three of them together, live, to a fresh question this series has never
+used before (a torque specification): checking whether an ungrounded
+answer is even consistent across reworded questions, then grounding it
+with the same real retrieve-then-answer pipeline from notebook 4. Ends
+with a one-page, five-rule summary you can actually keep next to your
+desk, and closes out the main path.
+
+**You'll be able to answer:** Given everything the first four notebooks
+showed, what should I actually *do* differently the next time an AI tool
+gives me an answer at work?
+
 ## How to run: three ways, pick what fits you
 
 ### Easiest: open in Google Colab — no installation at all
@@ -177,12 +193,15 @@ Google server. Nothing to install on your own computer.
 [![Open Notebook 4 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/djimrastephane/oilfield-llm-next-token-lab/blob/main/notebooks/04_grounding_answers_in_real_documents.ipynb)
 **Notebook 4** — Grounding answers in real documents (RAG)
 
+[![Open Notebook 5 in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/djimrastephane/oilfield-llm-next-token-lab/blob/main/notebooks/05_day_to_day_rules_for_using_ai_tools.ipynb)
+**Notebook 5** — Day-to-day rules for using an AI tool at work
+
 Every notebook above was tested end to end on Colab's free tier before
 being added here: on a T4 GPU runtime, downloading the ~3 GB model took
 under a minute (Colab's connection is much faster than a typical home
 connection), and each notebook ran without any errors or code changes —
-notebook 4's real, live outputs on Colab's GPU matched the ones from a
-local run exactly. A few things to expect, honestly:
+notebooks 4 and 5's real, live outputs on Colab's GPU matched the ones
+from a local run exactly. A few things to expect, honestly:
 
 - The first time you open the link, Colab shows a one-time warning that
   the notebook wasn't authored by Google, since it's loading from GitHub.
@@ -243,6 +262,7 @@ command when you activate the virtual environment.
    jupyter notebook notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
    jupyter notebook notebooks/03_does_high_probability_mean_correct.ipynb
    jupyter notebook notebooks/04_grounding_answers_in_real_documents.ipynb
+   jupyter notebook notebooks/05_day_to_day_rules_for_using_ai_tools.ipynb
    ```
 
 Run the cells in order, top to bottom, in any notebook — each stands on
@@ -294,7 +314,8 @@ oilfield-llm-next-token-lab/
 │   ├── 01_how_a_real_llm_predicts_the_next_token.ipynb
 │   ├── 02_temperature_sampling_and_decoding_strategies.ipynb
 │   ├── 03_does_high_probability_mean_correct.ipynb
-│   └── 04_grounding_answers_in_real_documents.ipynb
+│   ├── 04_grounding_answers_in_real_documents.ipynb
+│   └── 05_day_to_day_rules_for_using_ai_tools.ipynb
 ├── advanced/                                      <- optional, see advanced/README.md
 │   ├── README.md
 │   ├── 03_embeddings_and_attention.ipynb
@@ -314,6 +335,6 @@ directly out of the loaded model — nothing is hard-coded, simulated, or
 adjusted to produce a tidier-looking result. If the model's real answer
 isn't the intuitive oilfield word, the notebooks show that honestly rather
 than filtering it out. **No AI or programming background is required for
-the main path** (notebooks 1–4) — the Colab option above means you don't
+the main path** (notebooks 1–5) — the Colab option above means you don't
 even need to install anything to see that for yourself. The advanced path
 assumes real ML/Python fluency — see `advanced/README.md`.
