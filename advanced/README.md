@@ -55,7 +55,7 @@ comfort reading logits, gradients, and linear algebra notation.
 
 The two below are exact copies of the main path's closing notebooks,
 included here too for completeness. They're not written at this folder's
-technical level — see items 1-6 above for that.
+technical level — see items 1–6 above for that.
 
 7. **`09_grounding_answers_in_real_documents.ipynb`** — identical to the
    main path's

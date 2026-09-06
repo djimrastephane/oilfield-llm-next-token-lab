@@ -76,9 +76,10 @@ this README is about the main path.
         the four real findings above, turned into five practical rules
 ```
 
-All six steps are built today, as `notebooks/01_...`, `notebooks/02_...ipynb`,
-`notebooks/03_...ipynb`, `notebooks/04_...ipynb`, and `notebooks/05_...ipynb`.
-The main path is complete — see below for what each notebook covers.
+All six steps are built today, as `notebooks/01_...ipynb`,
+`notebooks/02_...ipynb`, `notebooks/03_...ipynb`, `notebooks/04_...ipynb`,
+and `notebooks/05_...ipynb`. The main path is complete — see below for
+what each notebook covers.
 
 ### Notebook 1: What does an LLM actually do, and why does context matter?
 
@@ -170,7 +171,7 @@ where it falls short.
 `notebooks/05_day_to_day_rules_for_using_ai_tools.ipynb`
 
 The capstone. No new theory — it pulls the four real findings from
-notebooks 1-4 together into five practical rules, then applies the last
+notebooks 1–4 together into five practical rules, then applies the last
 three of them together, live, to a fresh question this series has never
 used before (a torque specification): checking whether an ungrounded
 answer is even consistent across reworded questions, then grounding it
