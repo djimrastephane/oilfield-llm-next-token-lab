@@ -1,5 +1,11 @@
 # Oilfield LLM Next-Token Lab
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![PyTorch 2.0+](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c.svg)](https://pytorch.org/)
+[![Transformers 4.56+](https://img.shields.io/badge/Transformers-4.56%2B-ffcc00.svg)](https://huggingface.co/docs/transformers)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/djimrastephane/oilfield-llm-next-token-lab/blob/main/notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb)
+
 You type an oilfield sentence into an AI assistant:
 
 > "The crew pulled out of hole with the worn PDC bit and prepared to run a new..."
