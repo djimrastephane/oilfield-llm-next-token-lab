@@ -74,7 +74,7 @@ this README is about the main path.
         NO -- a fluent, confident, specific number can still be made up
    |
 5. How do we make it safer for engineering use (grounding, RAG)?
-        give the model the real document -> it reads instead of guesses
+        give the model the provided source document -> it reads instead of guesses
    |
 6. What should an engineer remember, day to day?
         the four real findings above, turned into five practical rules
@@ -144,7 +144,7 @@ number an AI tool gives me?
 `notebooks/04_grounding_answers_in_real_documents.ipynb`
 
 The fix for what notebook 3 found. Instead of asking the real model to
-recall a fact, this notebook shows it a real reference document and lets
+recall a fact, this notebook shows it a synthetic reference document and lets
 it read the answer off the page instead — and proves, live, that this
 turns a guess into a correct, checkable answer. Then it builds a small,
 fully-visible retrieval step (no hidden "embeddings" — just counting
@@ -357,7 +357,11 @@ is exactly what "checked" means:
   "Technical appendix" section prints these same version numbers live,
   for the environment you're actually running in — so you can always
   check your own setup against this one directly, without taking our
-  word for it.
+  word for it. `requirements.txt` only pins floors, so
+  `pip install -r requirements.txt` will not reproduce this exact
+  environment as newer releases ship; for that, use
+  `pip install -r requirements-lock.txt`, a full freeze of the tested
+  environment above.
 - **Also verified on Google Colab's free tier:** a T4 GPU runtime
   (`cuda` backend), Python 3.13.15, PyTorch 2.11.0+cu128, Transformers
   5.16.1 — a different OS, a different GPU vendor, and a different

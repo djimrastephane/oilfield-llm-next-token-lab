@@ -1,3 +1,6 @@
+# Minimum version floors only. For the exact environment this project was
+# built and checked against, use requirements-lock.txt instead (see the
+# README's Reproducibility section).
 torch>=2.0.0  # register_forward_pre_hook(..., with_kwargs=True) requires 2.0+; used in advanced notebooks 7-8
 transformers>=4.56.0  # from_pretrained(..., dtype=...) requires 4.56+; older versions only accept torch_dtype=
 accelerate
