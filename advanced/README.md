@@ -24,7 +24,7 @@ comfort reading logits, gradients, and linear algebra notation.
 
 ## Notebooks
 
-1. **`03_embeddings_and_attention.ipynb`** — real token embedding vectors
+1. **`01_embeddings_and_attention.ipynb`** — real token embedding vectors
    and their cosine similarities (a genuinely useful connection to
    semantic search / RAG — see the main path's
    [`04_grounding_answers_in_real_documents.ipynb`](../notebooks/04_grounding_answers_in_real_documents.ipynb)
@@ -32,23 +32,23 @@ comfort reading logits, gradients, and linear algebra notation.
    mostly track spelling, not oilfield meaning), and real per-layer
    attention weights, with a sustained caution against treating attention
    as a causal explanation.
-2. **`04_gradient_attribution_and_occlusion.ipynb`** — gradient × input,
+2. **`02_gradient_attribution_and_occlusion.ipynb`** — gradient × input,
    Integrated Gradients (validated on a toy function, then checked against
    its own completeness guarantee on the real model — a check it fails,
    reported honestly), and direct occlusion.
-3. **`05_activation_patching_and_causal_tracing.ipynb`** — a real
+3. **`03_activation_patching_and_causal_tracing.ipynb`** — a real
    intervention on the model's running computation: cache a clean run,
    corrupt part of the input, and patch pieces back in to see what's
    causally recoverable where.
-4. **`06_probing_classifiers.ipynb`** — trains linear classifiers on the
+4. **`04_probing_classifiers.ipynb`** — trains linear classifiers on the
    model's frozen internal representations to test whether an
    externally-defined category is linearly decodable — and whether that
    holds up under a stricter, harder evaluation split.
-5. **`07_individual_head_circuit_analysis.ipynb`** — isolates and ablates
+5. **`05_individual_head_circuit_analysis.ipynb`** — isolates and ablates
    individual attention heads (336 of them) to find which single heads
    causally matter most, then checks whether that head's own attention
    pattern tells a consistent story.
-6. **`08_individual_neuron_analysis.ipynb`** — screens thousands of
+6. **`06_individual_neuron_analysis.ipynb`** — screens thousands of
    individual MLP neurons cheaply, validates the top candidates with real
    ablation, and interprets the winner two independent ways (causal
    ablation and a prompt-free "logit lens" projection) — which agree.
@@ -57,12 +57,12 @@ The two below are exact copies of the main path's closing notebooks,
 included here too for completeness. They're not written at this folder's
 technical level — see items 1–6 above for that.
 
-7. **`09_grounding_answers_in_real_documents.ipynb`** — identical to the
+7. **`07_grounding_answers_in_real_documents.ipynb`** — identical to the
    main path's
    [`04_grounding_answers_in_real_documents.ipynb`](../notebooks/04_grounding_answers_in_real_documents.ipynb):
    grounding answers in real documents (RAG) with a simple, fully-visible
    keyword-overlap retrieval step.
-8. **`10_day_to_day_rules_for_using_ai_tools.ipynb`** — identical to the
+8. **`08_day_to_day_rules_for_using_ai_tools.ipynb`** — identical to the
    main path's
    [`05_day_to_day_rules_for_using_ai_tools.ipynb`](../notebooks/05_day_to_day_rules_for_using_ai_tools.ipynb):
    the five-rule, day-to-day summary that closes out the main path.
@@ -71,8 +71,8 @@ technical level — see items 1–6 above for that.
 
 Same environment as the main path — see the top-level README's
 [How to run](../README.md#how-to-run-three-ways-pick-what-fits-you)
-section for installation. `06_probing_classifiers.ipynb`
+section for installation. `04_probing_classifiers.ipynb`
 additionally needs `scikit-learn` (already listed in `requirements.txt`).
-Each notebook runs independently, top to bottom. Notebooks 3 and 7 load the
+Each notebook runs independently, top to bottom. Notebooks 1 and 5 load the
 model differently (`attn_implementation="eager"`, `float32`) than the rest,
 for reasons explained in each notebook's own setup section.

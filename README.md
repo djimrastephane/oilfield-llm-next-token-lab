@@ -166,7 +166,7 @@ This notebook's retrieval step deliberately uses simple word-counting,
 not "embeddings," so every step stays visible. If you're curious how a
 real meaning-based (embedding) search actually performs on oilfield
 language instead, see the advanced path's
-[`03_embeddings_and_attention.ipynb`](advanced/03_embeddings_and_attention.ipynb)
+[`01_embeddings_and_attention.ipynb`](advanced/01_embeddings_and_attention.ipynb)
 — it tests that directly on this same model, with real results, including
 where it falls short.
 
@@ -372,11 +372,11 @@ is exactly what "checked" means:
   against a local run and matched **bit-for-bit** — same tokens, same
   probabilities, down to the displayed decimal; the other main-path
   notebooks ran cleanly on both backends but weren't compared at that same
-  decimal-level precision. The two heaviest advanced notebooks (7 and 8),
+  decimal-level precision. The two heaviest advanced notebooks (5 and 6),
   which each aggregate results across hundreds or thousands of tiny
   numerical comparisons, showed **small floating-point differences between
   backends** in some displayed values when checked the same way — for
-  example, notebook 8's clean-prediction probability read 33.5% locally
+  example, notebook 6's clean-prediction probability read 33.5% locally
   and 33.8% on Colab's GPU. This did not change either notebook's real
   conclusion (the exact same neuron and layer were identified as most
   important on both backends) — but it's a real, observed difference, not
@@ -396,14 +396,14 @@ oilfield-llm-next-token-lab/
 │   └── 05_day_to_day_rules_for_using_ai_tools.ipynb
 ├── advanced/                                      <- optional, see advanced/README.md
 │   ├── README.md
-│   ├── 03_embeddings_and_attention.ipynb
-│   ├── 04_gradient_attribution_and_occlusion.ipynb
-│   ├── 05_activation_patching_and_causal_tracing.ipynb
-│   ├── 06_probing_classifiers.ipynb
-│   ├── 07_individual_head_circuit_analysis.ipynb
-│   ├── 08_individual_neuron_analysis.ipynb
-│   ├── 09_grounding_answers_in_real_documents.ipynb
-│   └── 10_day_to_day_rules_for_using_ai_tools.ipynb
+│   ├── 01_embeddings_and_attention.ipynb
+│   ├── 02_gradient_attribution_and_occlusion.ipynb
+│   ├── 03_activation_patching_and_causal_tracing.ipynb
+│   ├── 04_probing_classifiers.ipynb
+│   ├── 05_individual_head_circuit_analysis.ipynb
+│   ├── 06_individual_neuron_analysis.ipynb
+│   ├── 07_grounding_answers_in_real_documents.ipynb
+│   └── 08_day_to_day_rules_for_using_ai_tools.ipynb
 ├── scripts/
 │   └── check_notebooks.py                        <- structural smoke test, no model needed
 ├── requirements.txt
