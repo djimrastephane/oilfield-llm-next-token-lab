@@ -232,10 +232,15 @@ from a local run exactly. A few things to expect, honestly:
 ### Local: run everything on your own computer
 
 Nothing you type leaves your machine — the most private option, and the
-one used for every real result in this README. The setup below has the
-same steps on **macOS, Windows, and Linux**, except for one command when
-you activate the virtual environment — but honestly, every real result in
-this README was actually generated on macOS specifically. Windows and
+one used for every real result in this README. (The model weights
+themselves still have to come from somewhere: the first time you run a
+notebook, it downloads the model from Hugging Face over the internet —
+see step 5 below — and every run after that reuses the local cache. It's
+only what you type into a prompt that never leaves your machine.) The
+setup below has the same steps on **macOS, Windows, and Linux**, except
+for one command when you activate the virtual environment — but
+honestly, every real result in this README was actually generated on
+macOS specifically. Windows and
 Linux run the identical code path (standard Python, PyTorch, and Jupyter,
 with no OS-specific logic beyond that one activation command), but
 haven't been independently re-verified end to end on this project's side.
