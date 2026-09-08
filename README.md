@@ -108,7 +108,8 @@ it changes.
 **You'll be able to answer:** What is my sentence actually being turned
 into before the model sees it? Why might the model's "obvious" next word
 not be so obvious after all? Why does adding more context change the
-answer?
+answer? And, in plain language, what's one honest hint at *how* the model
+ends up weighing some earlier words more heavily than others?
 
 ### Notebook 2: Why can the same question get a different answer?
 
