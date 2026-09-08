@@ -15,17 +15,17 @@ drilling manual? Does it follow a rule about "POOH"? Does it "know" the
 bit is worn? And why might it give you a different answer if you run the
 exact same prompt again tomorrow?
 
-This project lets you look inside a real, locally-run language model and
+This project lets you look inside a locally-run language model and
 see what actually happens — using drilling, completions, and
 well-intervention examples. **Every number and every word the model
 produces is real** — read live from the actual model, never invented,
 simulated, or cleaned up to make the results look tidier than they are.
 The *scenarios* themselves are sometimes deliberately fictional (a made-up
 well name, an invented company document) so the lesson works without
-needing anyone's real, private data — every notebook says so plainly,
+needing anyone's private data — every notebook says so plainly,
 right where it happens, the moment it happens.
 
-Here's the very first real result you'll see, straight from the model,
+Here's the very first result you'll see, straight from the model,
 unfiltered:
 
 ```
@@ -33,7 +33,7 @@ Input:
 "The crew pulled out of hole with the worn PDC bit
  and prepared to run a new ___"
 
-Real next-token candidates (from the actual model):
+Next-token candidates (from the actual model):
 
  bit      ████████████████████████████████████  33.5%
  one      ███████████████████████████████       27.8%
@@ -42,7 +42,7 @@ Real next-token candidates (from the actual model):
  drill    ██                                      2.0%
 ```
 
-Notice "one" is almost as likely as "bit" — a real, slightly surprising
+Notice "one" is almost as likely as "bit" — a slightly surprising
 result, not something anyone chose to show you. **These numbers are
 probabilities.** To see where they come from, and why they shift when you
 change the sentence, keep reading.
@@ -57,7 +57,7 @@ change the sentence, keep reading.
 | **Answers** | "What does the model actually do, and how do I use it well?" | "What's mechanistically happening inside, and how rigorously can we claim to know that?" |
 
 **If you're an oil & gas professional, you only need the main path.** The
-advanced path is real, technically rigorous interpretability research
+advanced path is technically rigorous interpretability research
 (attention, gradient attribution, activation patching, probing
 classifiers, individual attention heads and neurons) — genuinely
 interesting, but not required to get practical value from this project.
@@ -68,7 +68,7 @@ this README is about the main path.
 
 ```
 1. What does an LLM actually do?
-        real oilfield sentence -> real model -> real next-token candidates
+        oilfield sentence -> model -> next-token candidates
    |
 2. Why does context matter?
         "POOH" alone is ambiguous -- drilling vs. completions vs. intervention
@@ -83,7 +83,7 @@ this README is about the main path.
         give the model the provided source document -> it reads instead of guesses
    |
 6. What should an engineer remember, day to day?
-        the four real findings above, turned into five practical rules
+        the four findings above, turned into five practical rules
 ```
 
 All six steps are built today, as `notebooks/01_...ipynb`,
@@ -95,14 +95,14 @@ what each notebook covers.
 
 `notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb`
 
-Walks through the real mechanics behind the teaser result above: your
+Walks through the mechanics behind the teaser result above: your
 sentence gets broken into tokens, the model scores every possible next
 token, and those scores turn into the probabilities you saw. Then it uses
 oilfield's favorite ambiguous abbreviation — **POOH** ("pull out of
 hole"), which shows up in drilling, completions, logging, cleanouts, and
 fishing jobs alike — to show, with real numbers, how much the surrounding
 context changes what the model predicts. No made-up rule maps "POOH" to
-one category; you watch the real distribution shift as the sentence around
+one category; you watch the distribution shift as the sentence around
 it changes.
 
 **You'll be able to answer:** What is my sentence actually being turned
@@ -120,7 +120,7 @@ gets chosen and turned into generated text: **greedy decoding** (always
 take the top answer — deterministic) versus **sampling** (draw randomly,
 weighted by probability — so a lower-probability word can still come out).
 Shows exactly what the "temperature" setting in any AI tool actually does
-to those real numbers, and what "top-k" / "top-p" mean when you see them
+to those numbers, and what "top-k" / "top-p" mean when you see them
 in a model's settings.
 
 **You'll be able to answer:** Why did I get a different answer when I
@@ -132,10 +132,10 @@ asked the same question twice? What does turning down an AI tool's
 `notebooks/03_does_high_probability_mean_correct.ipynb`
 
 The most consequential lesson in the series for actual work use. Watches
-the real model write a confident-sounding field note with a specific
-pressure test value for a completely fictional well, then runs the real
+the model write a confident-sounding field note with a specific
+pressure test value for a completely fictional well, then runs the
 test that matters: does that number change when nothing relevant about
-the question does? (It does — real result, shown honestly.) Then checks
+the question does? (It does — shown honestly.) Then checks
 whether this only happens with made-up scenarios, using a genuinely
 well-established industry fact (one barrel of oil = 42 US gallons) —
 and finds that even that can come out wrong depending only on how the
@@ -150,13 +150,13 @@ number an AI tool gives me?
 
 `notebooks/04_grounding_answers_in_real_documents.ipynb`
 
-The fix for what notebook 3 found. Instead of asking the real model to
+The fix for what notebook 3 found. Instead of asking the model to
 recall a fact, this notebook shows it a synthetic reference document and lets
 it read the answer off the page instead — and proves, live, that this
 turns a guess into a correct, checkable answer. Then it builds a small,
 fully-visible retrieval step (no hidden "embeddings" — just counting
 shared words) that automatically finds the right document out of several,
-wires it together into a real, working retrieve-then-answer pipeline
+wires it together into a working retrieve-then-answer pipeline
 (RAG), and honestly tests two ways it can still go wrong: being handed
 the *wrong* document (the model repeats the wrong number just as
 confidently), and having *no* matching document at all (compares a plain
@@ -171,22 +171,22 @@ correct answer, or can it still fail — and how?
 
 This notebook's retrieval step deliberately uses simple word-counting,
 not "embeddings," so every step stays visible. If you're curious how a
-real meaning-based (embedding) search actually performs on oilfield
+meaning-based (embedding) search actually performs on oilfield
 language instead, see the advanced path's
 [`01_embeddings_and_attention.ipynb`](advanced/01_embeddings_and_attention.ipynb)
-— it tests that directly on this same model, with real results, including
-where it falls short.
+— it tests that directly on this same model and reports where it falls
+short.
 
 ### Notebook 5: Day-to-day rules for using an AI tool at work
 
 `notebooks/05_day_to_day_rules_for_using_ai_tools.ipynb`
 
-The capstone. No new theory — it pulls the four real findings from
+The capstone. No new theory — it pulls the four findings from
 notebooks 1–4 together into five practical rules, then applies the last
 three of them together, live, to a fresh question this series has never
 used before (a torque specification): checking whether an ungrounded
 answer is even consistent across reworded questions, then grounding it
-with the same real retrieve-then-answer pipeline from notebook 4. Ends
+with the same retrieve-then-answer pipeline from notebook 4. Ends
 with a one-page, five-rule summary you can actually keep next to your
 desk, and closes out the main path.
 
@@ -220,12 +220,12 @@ Every notebook above was tested end to end on Colab's free tier before
 being added here: on a T4 GPU runtime, downloading the ~3 GB model took
 under a minute (Colab's connection is much faster than a typical home
 connection), and each notebook ran without any errors or code changes —
-notebooks 4 and 5's real, live outputs on Colab's GPU matched the ones
+notebooks 4 and 5's live outputs on Colab's GPU matched the ones
 from a local run exactly. A few things to expect, honestly:
 
 - The first time you open the link, Colab shows a one-time warning that
   the notebook wasn't authored by Google, since it's loading from GitHub.
-  Click **"Run anyway"** — you're looking at the real, public source on
+  Click **"Run anyway"** — you're looking at the public source on
   GitHub, and can review it there first if you'd like.
 - For the best speed, use the menu **Runtime → Change runtime type →
   T4 GPU** (free) before running — the notebook works on the default
@@ -239,14 +239,14 @@ from a local run exactly. A few things to expect, honestly:
 ### Local: run everything on your own computer
 
 Nothing you type leaves your machine — the most private option, and the
-one used for every real result in this README. (The model weights
+one used for every result in this README. (The model weights
 themselves still have to come from somewhere: the first time you run a
 notebook, it downloads the model from Hugging Face over the internet —
 see step 5 below — and every run after that reuses the local cache. It's
 only what you type into a prompt that never leaves your machine.) The
 setup below has the same steps on **macOS, Windows, and Linux**, except
 for one command when you activate the virtual environment — but
-honestly, every real result in this README was actually generated on
+honestly, every result in this README was generated on
 macOS specifically. Windows and
 Linux run the identical code path (standard Python, PyTorch, and Jupyter,
 with no OS-specific logic beyond that one activation command), but
@@ -355,11 +355,11 @@ notebooks needs.
   loads (`revision=...`, set once near the top of each notebook), rather
   than silently tracking whatever the "main" branch happens to be on
   Hugging Face when you run it. If Qwen ever updates these weights, this
-  project's real numbers won't silently drift out from under you.
+  project's numbers won't silently drift out from under you.
 
 ## Reproducibility
 
-Every real number in this project came from an actual run, on real
+Every number in this project came from an actual run, on real
 hardware, that was checked before being written down — not assumed. Here
 is exactly what "checked" means:
 
@@ -379,7 +379,7 @@ is exactly what "checked" means:
   5.16.1 — a different OS, a different GPU vendor, and a different
   PyTorch build than the environment above.
 - **Do outputs match exactly across backends? Checked directly, and the
-  honest answer is: mostly, with one real exception.** Notebooks 4 and 5
+  honest answer is: mostly, with one exception.** Notebooks 4 and 5
   specifically (see the Colab section above) were checked output-by-output
   against a local run and matched **bit-for-bit** — same tokens, same
   probabilities, down to the displayed decimal; the other main-path
@@ -389,9 +389,9 @@ is exactly what "checked" means:
   numerical comparisons, showed **small floating-point differences between
   backends** in some displayed values when checked the same way — for
   example, notebook 6's clean-prediction probability read 33.5% locally
-  and 33.8% on Colab's GPU. This did not change either notebook's real
+  and 33.8% on Colab's GPU. This did not change either notebook's
   conclusion (the exact same neuron and layer were identified as most
-  important on both backends) — but it's a real, observed difference, not
+  important on both backends) — but it's an observed difference, not
   a hypothetical one, and it's the kind of thing you should expect if you
   re-run this project on your own hardware and compare decimal places
   closely.
@@ -432,13 +432,13 @@ downloading or loading the model:
 python3 scripts/check_notebooks.py
 ```
 
-## What this project promises
+## What you can count on
 
 Every probability, logit, and token shown in the main path is read
 directly out of the loaded model — nothing is hard-coded, simulated, or
-adjusted to produce a tidier-looking result. If the model's real answer
+adjusted to produce a tidier-looking result. If the model's answer
 isn't the intuitive oilfield word, the notebooks show that honestly rather
 than filtering it out. **No AI or programming background is required for
 the main path** (notebooks 1–5) — the Colab option above means you don't
 even need to install anything to see that for yourself. The advanced path
-assumes real ML/Python fluency — see [`advanced/README.md`](advanced/README.md).
+assumes ML/Python fluency — see [`advanced/README.md`](advanced/README.md).
