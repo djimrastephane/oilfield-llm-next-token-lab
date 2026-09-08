@@ -9,3 +9,4 @@ matplotlib
 numpy
 jupyter
 scikit-learn
+scipy  # hierarchical clustering (linkage/dendrogram) in advanced/01
