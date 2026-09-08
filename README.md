@@ -432,7 +432,7 @@ downloading or loading the model:
 python3 scripts/check_notebooks.py
 ```
 
-## What this project promises
+## What you can count on
 
 Every probability, logit, and token shown in the main path is read
 directly out of the loaded model — nothing is hard-coded, simulated, or
