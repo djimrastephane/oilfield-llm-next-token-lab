@@ -30,8 +30,9 @@ comfort reading logits, gradients, and linear algebra notation.
    [`04_grounding_answers_in_real_documents.ipynb`](../notebooks/04_grounding_answers_in_real_documents.ipynb)
    for the practical version — plus the honest finding that raw embeddings
    mostly track spelling, not oilfield meaning), and real per-layer
-   attention weights, with a sustained caution against treating attention
-   as a causal explanation.
+   attention weights (including a plain drilling-crew analogy for why the
+   model runs several heads in parallel), with a sustained caution against
+   treating attention as a causal explanation.
 2. **`02_gradient_attribution_and_occlusion.ipynb`** — gradient × input,
    Integrated Gradients (validated on a toy function, then checked against
    its own completeness guarantee on the real model — a check it fails,
