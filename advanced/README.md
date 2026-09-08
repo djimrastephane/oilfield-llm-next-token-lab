@@ -1,7 +1,7 @@
 # Advanced path — interpretability research
 
 **This folder is optional.** It's for data scientists and ML practitioners
-who want to look inside a real language model's internals — not required
+who want to look inside a language model's internals — not required
 to get practical value from the main, five-notebook series in
 `../notebooks/`, which is complete on its own: it runs from "what does an
 LLM actually do?" through decoding strategies, why confident answers can
@@ -13,7 +13,7 @@ for that series.
 Where the main path answers "what happens, and how do I use it well?", this
 path answers "what's actually going on inside the network, and how
 rigorously can we claim to know that?" Every notebook here follows the same
-rule as the main path — every number comes from the real, loaded model —
+rule as the main path — every number comes from the loaded model —
 but the questions get progressively more technical, and each one assumes
 comfort with Python, PyTorch tensors, and general deep-learning concepts
 (attention, gradients, embeddings).
@@ -24,20 +24,20 @@ comfort reading logits, gradients, and linear algebra notation.
 
 ## Notebooks
 
-1. **`01_embeddings_and_attention.ipynb`** — real token embedding vectors
+1. **`01_embeddings_and_attention.ipynb`** — token embedding vectors
    and their cosine similarities (a genuinely useful connection to
    semantic search / RAG — see the main path's
    [`04_grounding_answers_in_real_documents.ipynb`](../notebooks/04_grounding_answers_in_real_documents.ipynb)
    for the practical version — plus the honest finding that raw embeddings
-   mostly track spelling, not oilfield meaning), and real per-layer
+   mostly track spelling, not oilfield meaning), and per-layer
    attention weights (including a plain drilling-crew analogy for why the
    model runs several heads in parallel), with a sustained caution against
    treating attention as a causal explanation.
 2. **`02_gradient_attribution_and_occlusion.ipynb`** — gradient × input,
    Integrated Gradients (validated on a toy function, then checked against
-   its own completeness guarantee on the real model — a check it fails,
+   its own completeness guarantee on the model — a check it fails,
    reported honestly), and direct occlusion.
-3. **`03_activation_patching_and_causal_tracing.ipynb`** — a real
+3. **`03_activation_patching_and_causal_tracing.ipynb`** — an
    intervention on the model's running computation: cache a clean run,
    corrupt part of the input, and patch pieces back in to see what's
    causally recoverable where.
@@ -50,7 +50,7 @@ comfort reading logits, gradients, and linear algebra notation.
    causally matter most, then checks whether that head's own attention
    pattern tells a consistent story.
 6. **`06_individual_neuron_analysis.ipynb`** — screens thousands of
-   individual MLP neurons cheaply, validates the top candidates with real
+   individual MLP neurons cheaply, validates the top candidates with
    ablation, and interprets the winner two independent ways (causal
    ablation and a prompt-free "logit lens" projection) — which agree.
 
