@@ -33,6 +33,7 @@ def check_notebook(path: str) -> list[str]:
         problems.append(f"unexpected nbformat version: {nb.get('nbformat')!r}")
 
     headers: set[int] = set()
+    header_occurrences: list[int] = []
     markdown_text = []
     for i, cell in enumerate(nb.get("cells", [])):
         source = "".join(cell.get("source", []))
@@ -46,23 +47,43 @@ def check_notebook(path: str) -> list[str]:
             for line in source.splitlines():
                 m = re.match(r"^#{1,3} (\d+)\.", line)
                 if m:
-                    headers.add(int(m.group(1)))
+                    n = int(m.group(1))
+                    headers.add(n)
+                    header_occurrences.append(n)
 
     if headers:
         expected = set(range(1, max(headers) + 1))
         missing = expected - headers
-        duplicate_check = list(headers)
         if missing:
             problems.append(f"numbered headers skip: {sorted(missing)} (found {sorted(headers)})")
+        duplicates = sorted(n for n in headers if header_occurrences.count(n) > 1)
+        if duplicates:
+            problems.append(f"duplicate numbered headers: {duplicates}")
 
     full_text = "\n".join(markdown_text)
-    for m in re.finditer(r"Sections? (\d+)(?:-(\d+))?", full_text):
-        # Skip references that are qualified by another notebook, e.g.
-        # "notebook 4's Section 10" or "notebook 4 ... in its Section 10" --
-        # those point at a *different* file's numbering, not this one's.
-        preceding = full_text[max(0, m.start() - 60) : m.start()]
-        if re.search(r"notebook\s+\d+", preceding, re.IGNORECASE):
+    for m in re.finditer(r"Sections? (\d+)(?:\s*(?:-|through)\s*(\d+))?", full_text):
+        # A "Section N" reference can be explicitly marked as pointing at
+        # *this* notebook ("... Section 12 here") or *another* one ("...
+        # Section 9 there") -- those markers take precedence over anything
+        # else nearby, since a notebook can mention its own and another
+        # notebook's sections in the same sentence (e.g. "notebook 1
+        # (Section 9 there) ... Section 12 here").
+        following = full_text[m.end() : m.end() + 15]
+        if re.match(r"\s+there\b", following):
             continue
+        if not re.match(r"\s+here\b", following):
+            # No explicit marker: fall back to whether a "notebook N"
+            # qualifier appears earlier in the *same sentence* -- bounded
+            # by the previous sentence/paragraph break, not a fixed
+            # character count, so it can't bleed into an unrelated,
+            # later sentence's own self-reference.
+            sentence_start = max(
+                full_text.rfind(".", 0, m.start()) + 1,
+                full_text.rfind("\n\n", 0, m.start()) + 1,
+            )
+            preceding = full_text[sentence_start : m.start()]
+            if re.search(r"notebook\s+\d+", preceding, re.IGNORECASE):
+                continue
         nums = [int(m.group(1))] + ([int(m.group(2))] if m.group(2) else [])
         for n in nums:
             if n not in headers:
