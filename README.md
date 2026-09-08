@@ -49,14 +49,14 @@ change the sentence, keep reading.
 
 ## Disclaimer
 
-- **This is an educational tool, not engineering guidance.** Every
-  pressure value, torque spec, and number shown anywhere in this
-  project — including the model's own raw output — exists to teach how
-  a language model actually behaves. None of it is a source of real
-  drilling, completion, or well-intervention data, and none of it
+- **This is an educational tool, not engineering guidance.** The
+  model's numbers are genuinely computed, as stated above — but the
+  wells, companies, and reports they're computed from are fictional
+  scenarios built for teaching, not actual operations. Nothing shown
+  anywhere in this project, including the model's own live output,
   should inform an actual engineering, safety, or operational
   decision.
-- **Every well, company, and document is fictional.** No real field
+- **Every well, company, and document is fictional.** No actual field
   data, proprietary reports, or operator information appears anywhere
   in this project — every notebook says so plainly at the point it
   matters.
