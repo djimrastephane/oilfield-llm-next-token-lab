@@ -47,6 +47,24 @@ result, not something anyone chose to show you. **These numbers are
 probabilities.** To see where they come from, and why they shift when you
 change the sentence, keep reading.
 
+## Disclaimer
+
+- **This is an educational tool, not engineering guidance.** Every
+  pressure value, torque spec, and number shown anywhere in this
+  project — including the model's own raw output — exists to teach how
+  a language model actually behaves. None of it is a source of real
+  drilling, completion, or well-intervention data, and none of it
+  should inform an actual engineering, safety, or operational
+  decision.
+- **Every well, company, and document is fictional.** No real field
+  data, proprietary reports, or operator information appears anywhere
+  in this project — every notebook says so plainly at the point it
+  matters.
+- **No affiliation.** This project isn't affiliated with, endorsed by,
+  or sponsored by Alibaba/Qwen, Hugging Face, or any oil & gas
+  operator or company. It's provided "as is," with no warranty — see
+  [LICENSE](LICENSE) for the full terms.
+
 ## Two paths through this project
 
 | | Main path | Advanced path |

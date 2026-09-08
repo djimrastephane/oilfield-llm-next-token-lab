@@ -1,5 +1,10 @@
 # Advanced path — interpretability research
 
+See the top-level README's
+[Disclaimer](../README.md#disclaimer) — it applies to this folder too:
+educational tool, not engineering guidance; every well, company, and
+document referenced anywhere in this project is fictional.
+
 **This folder is optional.** It's for data scientists and ML practitioners
 who want to look inside a language model's internals — not required
 to get practical value from the main, five-notebook series in
