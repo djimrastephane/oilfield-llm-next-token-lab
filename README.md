@@ -360,6 +360,18 @@ notebooks needs.
   Windows, or Linux (see the note above on what's actually been tested
   on each). No GPU is required — CPU-only execution works fine on any
   modern laptop, just somewhat slower.
+- **RAM, if you're running on CPU:** loading `Qwen2.5-1.5B-Instruct` in
+  the float32 precision this project uses on CPU takes roughly 6 GB of
+  free memory on its own (measured directly: ~5.9 GB peak, before
+  Python/PyTorch/Jupyter's own overhead) — separate from the ~3 GB
+  download size above, which is disk, not RAM. On a machine with 8 GB of
+  total RAM, that can be enough to run out of memory while the model
+  loads. If that happens, it's an operating-system-level kill, not a
+  Python error the notebook's own fallback logic can catch — so on an
+  8 GB machine, set `PRIMARY_MODEL_NAME` to `Qwen/Qwen2.5-0.5B-Instruct`
+  yourself before running (needs roughly 2 GB) rather than relying on
+  the automatic fallback described below. GPU users (`mps`/`cuda`) run in
+  float16 instead, at roughly half this footprint.
 - **Offline use:** after the first download, the notebook runs fully
   offline.
 - If `Qwen2.5-1.5B-Instruct` fails to load in your environment for any
@@ -368,7 +380,9 @@ notebooks needs.
   actually ran — it will never silently substitute a model without
   telling you. This isn't just a description of the code: the fallback
   was deliberately triggered and confirmed working end to end before this
-  claim was written.
+  claim was written. (This fallback catches a Python-level load failure;
+  it can't catch an OS-level out-of-memory kill — see the RAM note
+  above.)
 - **Model revision:** every notebook pins the exact model commit it
   loads (`revision=...`, set once near the top of each notebook), rather
   than silently tracking whatever the "main" branch happens to be on
