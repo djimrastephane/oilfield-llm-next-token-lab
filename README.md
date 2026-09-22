@@ -267,9 +267,22 @@ for one command when you activate the virtual environment — but
 honestly, every result in this README was generated on
 macOS specifically. Windows and
 Linux run the identical code path (standard Python, PyTorch, and Jupyter,
-with no OS-specific logic beyond that one activation command), but
-haven't been independently re-verified end to end on this project's side.
-If you hit a platform-specific snag, please open a GitHub issue.
+with no OS-specific logic beyond that one activation command).
+
+**Linux specifically has since been checked, separately from macOS:** the
+setup steps above (creating the venv, `pip install -r requirements.txt`,
+importing PyTorch/Transformers, and the automatic GPU/CPU
+device-detection falling back to CPU with no GPU present) were run end
+to end in a real Linux environment, following this README's own
+instructions exactly with no code changes, and all 13 notebooks passed
+`scripts/check_notebooks.py` there. That check did **not** include
+re-generating this README's actual numbers on Linux — that's still only
+been done on macOS and on Colab's Linux-based T4 GPU runtime (see
+Reproducibility below) — and it surfaced a real RAM finding on
+CPU-only Linux, now documented in the Hardware section above. Windows
+hasn't been independently checked at all, beyond the code path being
+identical. If you hit a platform-specific snag, please open a GitHub
+issue.
 
 1. Make sure you have Python 3.10+ installed.
 2. From the repo root, create a virtual environment:
