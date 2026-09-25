@@ -279,9 +279,9 @@ instructions exactly with no code changes, and all 13 notebooks passed
 re-generating this README's actual numbers on Linux — that's still only
 been done on macOS and on Colab's Linux-based T4 GPU runtime (see
 Reproducibility below) — and it surfaced a real RAM finding on
-CPU-only Linux, now documented in the Hardware section above. Windows
-hasn't been independently checked at all, beyond the code path being
-identical. If you hit a platform-specific snag, please open a GitHub
+CPU-only Linux, now documented under Model and hardware expectations
+below. Windows hasn't been independently checked at all, beyond the code
+path being identical. If you hit a platform-specific snag, please open a GitHub
 issue.
 
 1. Make sure you have Python 3.10+ installed.
@@ -328,8 +328,8 @@ issue.
 
 Run the cells in order, top to bottom, in any notebook — each stands on
 its own. The first code cell that loads the model will download it from
-Hugging Face the first time you run either one; after that it's cached and
-reused.
+Hugging Face the first time you run any of them; after that it's cached
+and reused.
 
 ### Advanced: clone and configure manually
 
@@ -469,9 +469,10 @@ oilfield-llm-next-token-lab/
 ```
 
 Before committing a notebook change, run the smoke test —
-it parses every notebook, checks every code cell is valid Python, and
-checks that numbered sections and cross-references line up, all without
-downloading or loading the model:
+it parses every notebook, checks every code cell is valid Python,
+checks that numbered sections and cross-references line up, and checks
+that `advanced/07` and `advanced/08` still match the main-path notebooks
+they copy, all without downloading or loading the model:
 
 ```bash
 python3 scripts/check_notebooks.py
