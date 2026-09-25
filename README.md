@@ -243,10 +243,12 @@ being added here: on a T4 GPU runtime, downloading the ~3 GB model took
 under a minute (Colab's connection is much faster than a typical home
 connection), and each notebook ran without any errors or code changes —
 notebooks 4 and 5's live outputs on Colab's GPU matched the ones
-from a local run exactly. The one exception is notebook 1's word-vector
-section (Section 11a), added after that Colab testing: it installs Gensim
-automatically if Colab doesn't already have it, but it hasn't been
-re-tested on Colab yet. A few things to expect, honestly:
+from a local run exactly. Notebook 1's word-vector section (Section 11a),
+added later, was then re-tested on its own Colab run: Colab didn't have
+Gensim, so the notebook installed it automatically (Gensim 4.4.0), the
+~128 MB GloVe download plus the whole section took about a minute, and
+its GloVe neighbor table and "bit" similarity scores matched a local run
+exactly. A few things to expect, honestly:
 
 - The first time you open the link, Colab shows a one-time warning that
   the notebook wasn't authored by Google, since it's loading from GitHub.
@@ -431,7 +433,7 @@ is exactly what "checked" means:
   environment above.
 - **Also verified on Google Colab's free tier:** a T4 GPU runtime
   (`cuda` backend), Python 3.13.15, PyTorch 2.11.0+cu128, Transformers
-  5.16.1 — a different OS, a different GPU vendor, and a different
+  5.16.1, Gensim 4.4.0 — a different OS, a different GPU vendor, and a different
   PyTorch build than the environment above.
 - **Do outputs match exactly across backends? Checked directly, and the
   honest answer is: mostly, with one exception.** Notebooks 4 and 5
