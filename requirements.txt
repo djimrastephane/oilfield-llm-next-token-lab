@@ -9,3 +9,4 @@ matplotlib
 numpy
 jupyter
 scikit-learn
+gensim  # loads public GloVe word vectors, compared against the model's own vectors in notebook 1 and advanced notebook 1
