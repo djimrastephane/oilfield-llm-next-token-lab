@@ -9,6 +9,8 @@ any heavy dependency:
     duplicates
   - every "Section N" / "Sections N-M" cross-reference in the notebook's own
     text points to a header number that actually exists in that notebook
+  - advanced/ notebooks documented as copies of a main-path notebook have
+    identical cell sources to their original
 
 Run before committing any notebook change:
     python3 scripts/check_notebooks.py
@@ -92,6 +94,39 @@ def check_notebook(path: str) -> list[str]:
     return problems
 
 
+# advanced/ notebooks documented (in advanced/README.md) as exact copies of a
+# main-path notebook. A fix applied to only one side of a pair used to go
+# unnoticed, so any difference in cell types or sources is a failure.
+# Outputs aren't compared -- they carry run-specific noise like object
+# addresses.
+COPIED_NOTEBOOKS = {
+    "advanced/07_grounding_answers_in_real_documents.ipynb": "notebooks/04_grounding_answers_in_real_documents.ipynb",
+    "advanced/08_day_to_day_rules_for_using_ai_tools.ipynb": "notebooks/05_day_to_day_rules_for_using_ai_tools.ipynb",
+}
+
+
+def cell_sources(path: str) -> list[tuple[str, str]]:
+    with open(path, encoding="utf-8") as f:
+        nb = json.load(f)
+    return [(cell.get("cell_type"), "".join(cell.get("source", []))) for cell in nb.get("cells", [])]
+
+
+def check_copy(copy_path: str, original_path: str) -> list[str]:
+    try:
+        copy_cells = cell_sources(copy_path)
+        original_cells = cell_sources(original_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"could not compare against {original_path}: {exc}"]
+
+    if len(copy_cells) != len(original_cells):
+        return [f"out of sync with {original_path}: {len(copy_cells)} cells vs {len(original_cells)}"]
+    return [
+        f"out of sync with {original_path}: cell {i} differs"
+        for i, (a, b) in enumerate(zip(copy_cells, original_cells))
+        if a != b
+    ]
+
+
 def main() -> int:
     paths = sorted(glob.glob("notebooks/*.ipynb")) + sorted(glob.glob("advanced/*.ipynb"))
     if not paths:
@@ -101,6 +136,8 @@ def main() -> int:
     exit_code = 0
     for path in paths:
         problems = check_notebook(path)
+        if path in COPIED_NOTEBOOKS:
+            problems += check_copy(path, COPIED_NOTEBOOKS[path])
         if problems:
             exit_code = 1
             print(f"FAIL {path}")
