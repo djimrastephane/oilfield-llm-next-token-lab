@@ -121,7 +121,11 @@ hole"), which shows up in drilling, completions, logging, cleanouts, and
 fishing jobs alike — to show, with real numbers, how much the surrounding
 context changes what the model predicts. No made-up rule maps "POOH" to
 one category; you watch the distribution shift as the sentence around
-it changes.
+it changes. It also puts the model next to an older kind of tool: classic
+"word vectors" (GloVe, loaded with the Gensim library), which give each
+word one fixed meaning, so "bit" always sits beside "little" and
+"pretty". Inside the real model, the vector for "bit" changes depending
+on whether the sentence is about a PDC bit or "a little bit".
 
 **You'll be able to answer:** What is my sentence actually being turned
 into before the model sees it? Why might the model's "obvious" next word
@@ -239,7 +243,10 @@ being added here: on a T4 GPU runtime, downloading the ~3 GB model took
 under a minute (Colab's connection is much faster than a typical home
 connection), and each notebook ran without any errors or code changes —
 notebooks 4 and 5's live outputs on Colab's GPU matched the ones
-from a local run exactly. A few things to expect, honestly:
+from a local run exactly. The one exception is notebook 1's word-vector
+section (Section 11a), added after that Colab testing: it installs Gensim
+automatically if Colab doesn't already have it, but it hasn't been
+re-tested on Colab yet. A few things to expect, honestly:
 
 - The first time you open the link, Colab shows a one-time warning that
   the notebook wasn't authored by Google, since it's loading from GitHub.
@@ -365,7 +372,10 @@ notebooks needs.
 - **Download size:** approximately 3 GB, downloaded once and cached in
   your user folder (`~/.cache/huggingface` on macOS/Linux;
   `C:\Users\<you>\.cache\huggingface` on Windows) — you won't need to
-  manage this yourself, it's handled automatically.
+  manage this yourself, it's handled automatically. Notebook 1 and
+  advanced notebook 1 also download a set of public GloVe word vectors
+  (about 128 MB) the first time they reach their word-vector section,
+  cached in `~/gensim-data`.
 - **Hardware:** the notebook automatically detects and uses whichever is
   fastest on your machine — an Apple Silicon Mac's built-in GPU, an
   NVIDIA GPU (common on Windows and Linux desktops/laptops), or, if
@@ -385,8 +395,8 @@ notebooks needs.
   yourself before running (needs roughly 2 GB) rather than relying on
   the automatic fallback described below. GPU users (`mps`/`cuda`) run in
   float16 instead, at roughly half this footprint.
-- **Offline use:** after the first download, the notebook runs fully
-  offline.
+- **Offline use:** after the first download (the model, plus the GloVe
+  vectors for notebook 1), the notebooks run fully offline.
 - If `Qwen2.5-1.5B-Instruct` fails to load in your environment for any
   reason, the notebook automatically falls back to a smaller sibling model
   (`Qwen2.5-0.5B-Instruct`, about 950 MB) and clearly reports which model

@@ -34,7 +34,10 @@ comfort reading logits, gradients, and linear algebra notation.
    semantic search / RAG — see the main path's
    [`04_grounding_answers_in_real_documents.ipynb`](../notebooks/04_grounding_answers_in_real_documents.ipynb)
    for the practical version — plus the honest finding that raw embeddings
-   mostly track spelling, not oilfield meaning), and per-layer
+   mostly track spelling, not oilfield meaning), a comparison of static
+   word vectors (public GloVe vectors via Gensim, and the model's own
+   input embeddings) against the model's contextual hidden states, layer
+   by layer, for words like "bit" in drilling vs. everyday sentences, and per-layer
    attention weights (including a plain drilling-crew analogy for why the
    model runs several heads in parallel), with a sustained caution against
    treating attention as a causal explanation.
