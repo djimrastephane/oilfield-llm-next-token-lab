@@ -11,6 +11,8 @@ any heavy dependency:
     text points to a header number that actually exists in that notebook
   - advanced/ notebooks documented as copies of a main-path notebook have
     identical cell sources to their original
+  - the file is saved in the repo's standard JSON format (see
+    canonical_json), so edits produce minimal, consistent diffs
 
 Run before committing any notebook change:
     python3 scripts/check_notebooks.py
@@ -22,14 +24,31 @@ import re
 import sys
 
 
+def canonical_json(nb: dict) -> str:
+    # Every notebook is stored in exactly this form. Tools like
+    # nbformat.write() or `ruff check --fix` default to literal UTF-8 and a
+    # trailing newline instead, which rewrites every non-ASCII character in
+    # the whole file and turns a one-line edit into a large diff.
+    return json.dumps(nb, indent=1, sort_keys=True, ensure_ascii=True)
+
+
 def check_notebook(path: str) -> list[str]:
     problems = []
 
+    # Text mode reads \r\n as \n, so a Windows checkout with autocrlf still
+    # compares equal.
     with open(path, encoding="utf-8") as f:
-        try:
-            nb = json.load(f)
-        except json.JSONDecodeError as exc:
-            return [f"invalid JSON: {exc}"]
+        raw = f.read()
+    try:
+        nb = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        return [f"invalid JSON: {exc}"]
+
+    if raw != canonical_json(nb):
+        problems.append(
+            "not saved in the repo's standard JSON format -- re-save it as "
+            "json.dumps(nb, indent=1, sort_keys=True, ensure_ascii=True) with no trailing newline"
+        )
 
     if nb.get("nbformat") != 4:
         problems.append(f"unexpected nbformat version: {nb.get('nbformat')!r}")
