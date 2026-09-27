@@ -1,28 +1,33 @@
-name: Windows notebooks
+name: Cross-platform notebooks
 
-# Runs the README's Local setup steps on a Windows runner (CPU only, no GPU) and
-# executes every notebook top to bottom. Heavy (real model inference on CPU), so it
-# only runs on demand, or on PRs that change this workflow file.
+# Runs the README's Local setup steps on Windows and Linux runners (CPU only, no
+# GPU) and executes every notebook top to bottom. Heavy (real model inference on
+# CPU), so it only runs on demand, or on PRs that change this workflow file.
 on:
   workflow_dispatch:
   pull_request:
     paths:
-      - .github/workflows/windows-notebooks.yml
+      - .github/workflows/cross-platform-notebooks.yml
 
 env:
-  HF_HOME: ${{ github.workspace }}\.hf-cache
-  GENSIM_DATA_DIR: ${{ github.workspace }}\.gensim-data
-  PYTHONUTF8: "0"  # keep Windows' default (non-UTF-8) text encoding, as a real user would have
+  HF_HOME: ${{ github.workspace }}/.hf-cache
+  GENSIM_DATA_DIR: ${{ github.workspace }}/.gensim-data
+  PYTHONUTF8: "0"  # keep the OS default text encoding, as a real user would have
 
 jobs:
   setup-and-check:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: README steps 2-4 (PowerShell)
+        if: runner.os == 'Windows'
         shell: pwsh
         run: |
           python -m venv .venv
@@ -30,23 +35,40 @@ jobs:
           pip install -r requirements.txt
           python -c "import torch, transformers, gensim; print(torch.__version__, transformers.__version__, gensim.__version__, 'cuda' if torch.cuda.is_available() else 'cpu')"
       - name: README step 3 (Command Prompt activation)
+        if: runner.os == 'Windows'
         shell: cmd
         run: |
           call .venv\Scripts\activate
           python -c "import sys; print(sys.prefix)"
-      - name: Notebook structure check
+      - name: README steps 2-4 (bash)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+          python -c "import torch, transformers, gensim; print(torch.__version__, transformers.__version__, gensim.__version__, 'cuda' if torch.cuda.is_available() else 'cpu')"
+      - name: Notebook structure check (Windows)
+        if: runner.os == 'Windows'
         shell: pwsh
         run: |
           .venv\Scripts\Activate.ps1
           python scripts/check_notebooks.py
+      - name: Notebook structure check (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          source .venv/bin/activate
+          python scripts/check_notebooks.py
 
   execute:
     needs: setup-and-check
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:
+        os: [windows-latest, ubuntu-latest]
         notebook:
           - notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
           - notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
@@ -72,18 +94,27 @@ jobs:
           path: |
             .hf-cache
             .gensim-data
-          key: windows-models-qwen2.5-1.5b-glove100-v1
-      - name: Execute notebook
+          key: ${{ runner.os }}-models-qwen2.5-1.5b-glove100-v1
+      - name: Execute notebook (Windows)
+        if: runner.os == 'Windows'
         shell: pwsh
         run: |
           python -m venv .venv
           .venv\Scripts\Activate.ps1
           pip install -r requirements.txt
           jupyter nbconvert --to notebook --execute "${{ matrix.notebook }}" --output-dir executed --ExecutePreprocessor.timeout=-1
+      - name: Execute notebook (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+          jupyter nbconvert --to notebook --execute "${{ matrix.notebook }}" --output-dir executed --ExecutePreprocessor.timeout=-1
       - name: Upload executed notebook
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: executed-${{ strategy.job-index }}
+          name: executed-${{ runner.os }}-${{ strategy.job-index }}
           path: executed/
           if-no-files-found: ignore

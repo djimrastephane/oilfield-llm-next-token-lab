@@ -286,12 +286,13 @@ importing PyTorch/Transformers, and the automatic GPU/CPU
 device-detection falling back to CPU with no GPU present) were run end
 to end in a real Linux environment, following this README's own
 instructions exactly with no code changes, and all 13 notebooks passed
-`scripts/check_notebooks.py` there. That check did **not** include
-re-generating this README's actual numbers on Linux — that's still only
-been done on macOS and on Colab's Linux-based T4 GPU runtime (see
-Reproducibility below) — and it surfaced a real RAM finding on
-CPU-only Linux, now documented under Model and hardware expectations
-below.
+`scripts/check_notebooks.py` there. That check surfaced a real RAM finding
+on CPU-only Linux, now documented under Model and hardware expectations
+below. On 2026-09-27 a GitHub Actions Ubuntu runner (4 CPUs, 16 GB RAM,
+no GPU) then went further: following the same README steps, it ran all 13
+notebooks top to bottom with the full `Qwen2.5-1.5B-Instruct` model and no
+errors. Linux with an NVIDIA GPU is covered by the Colab runs (Colab is
+Linux-based; see Reproducibility below).
 
 **Windows has also been checked since, on CPU only:** on 2026-09-27 a
 GitHub Actions Windows runner (Windows Server, 4 CPUs, 16 GB RAM, no GPU)
@@ -300,7 +301,7 @@ Command Prompt activation commands. `pip install -r requirements.txt`
 installed cleanly, `scripts/check_notebooks.py` passed, and all 13
 notebooks ran top to bottom with the full `Qwen2.5-1.5B-Instruct` model and
 no errors (see Reproducibility below for how the outputs compared). This
-can be re-run from the repo's **Actions** tab (the "Windows notebooks"
+can be re-run from the repo's **Actions** tab (the "Cross-platform notebooks"
 workflow). Windows with an NVIDIA GPU (`cuda`) has **not** been tested. If you hit a platform-specific snag, please open a GitHub
 issue.
 
@@ -446,11 +447,14 @@ is exactly what "checked" means:
   (`cuda` backend), Python 3.13.15, PyTorch 2.11.0+cu128, Transformers
   5.16.1, Gensim 4.4.0 — a different OS, a different GPU vendor, and a different
   PyTorch build than the environment above.
-- **Also run on Windows (CPU):** a GitHub Actions `windows-latest`
-  runner, Python 3.12.10, PyTorch 2.14.0+cpu, Transformers 5.17.0 (the
-  newest release at the time, installed from `requirements.txt`, not the
-  lock file), running in float32. All 13 notebooks ran without errors.
-  Compared with the committed outputs: notebooks 3 and 5 matched
+- **Also run on Windows and Linux (CPU):** GitHub Actions
+  `windows-latest` (Python 3.12.10, PyTorch 2.14.0+cpu) and `ubuntu-latest`
+  (Python 3.12.14, PyTorch 2.14.0+cu130 running on CPU) runners, both with
+  Transformers 5.17.0 (the newest release at the time, installed from
+  `requirements.txt`, not the lock file), running in float32. All 13
+  notebooks ran without errors on both, and the two platforms produced the
+  same words and tokens as each other, with numbers differing only in the
+  last digits. Compared with the committed outputs: notebooks 3 and 5 matched
   exactly; notebook 4 had the same one-word difference as Colab (see
   below); notebook 2's generated text was identical, with probabilities
   within a few hundredths of a percent; and in notebook 1, Section 10's
