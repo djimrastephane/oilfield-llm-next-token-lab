@@ -241,9 +241,11 @@ Google server. Nothing to install on your own computer.
 Every notebook above was tested end to end on Colab's free tier before
 being added here: on a T4 GPU runtime, downloading the ~3 GB model took
 under a minute (Colab's connection is much faster than a typical home
-connection), and each notebook ran without any errors or code changes —
-notebooks 4 and 5's live outputs on Colab's GPU matched the ones
-from a local run exactly. Notebook 1's word-vector section (Section 11a),
+connection), and each notebook ran without any errors or code changes.
+Outputs on Colab's GPU match a local run closely but not always to the
+last digit. Most tokens and answers are identical, but a few probabilities
+and one short completion differ slightly (details under
+[Reproducibility](#reproducibility)). Notebook 1's word-vector section (Section 11a),
 added later, was then re-tested on its own Colab run: Colab didn't have
 Gensim, so the notebook installed it automatically (Gensim 4.4.0), the
 ~128 MB GloVe download plus the whole section took about a minute, and
@@ -436,12 +438,23 @@ is exactly what "checked" means:
   5.16.1, Gensim 4.4.0 — a different OS, a different GPU vendor, and a different
   PyTorch build than the environment above.
 - **Do outputs match exactly across backends? Checked directly, and the
-  honest answer is: mostly, with one exception.** Notebooks 4 and 5
-  specifically (see the Colab section above) were checked output-by-output
-  against a local run and matched **bit-for-bit** — same tokens, same
-  probabilities, down to the displayed decimal; the other main-path
-  notebooks ran cleanly on both backends but weren't compared at that same
-  decimal-level precision. The two heaviest advanced notebooks (5 and 6),
+  honest answer is: closely, but not bit-for-bit.** A Colab re-run on
+  2026-09-25 was compared output-by-output against the committed local
+  (Apple Silicon GPU) outputs:
+  - **Notebook 3:** every output identical.
+  - **Notebook 4:** every output identical except one. Section 9's
+    wrong-document example printed "3,200 psi for" on Colab instead of
+    "3,200 psi", because the generation limit let the model add one more word.
+    It's still the wrong well's number, which is the point of that example.
+  - **Notebook 2:** every generated text identical, but the probabilities
+    shown differ slightly (e.g. " bit" at 33.84% on Colab vs 33.52%
+    locally), and so do the tallies from the 500 random samples (e.g. 176 vs
+    174 draws of " bit").
+  - **Notebook 1's Section 11a:** identical (see the Colab section above).
+  - Notebook 5 matched exactly when it was first tested on Colab, but
+    wasn't re-compared in the 2026-09-25 run.
+
+  The two heaviest advanced notebooks (5 and 6),
   which each aggregate results across hundreds or thousands of tiny
   numerical comparisons, showed **small floating-point differences between
   backends** in some displayed values when checked the same way — for
