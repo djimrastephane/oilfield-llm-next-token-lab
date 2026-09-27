@@ -291,8 +291,17 @@ re-generating this README's actual numbers on Linux — that's still only
 been done on macOS and on Colab's Linux-based T4 GPU runtime (see
 Reproducibility below) — and it surfaced a real RAM finding on
 CPU-only Linux, now documented under Model and hardware expectations
-below. Windows hasn't been independently checked at all, beyond the code
-path being identical. If you hit a platform-specific snag, please open a GitHub
+below.
+
+**Windows has also been checked since, on CPU only:** on 2026-09-27 a
+GitHub Actions Windows runner (Windows Server, 4 CPUs, 16 GB RAM, no GPU)
+followed the setup steps above exactly, including both the PowerShell and
+Command Prompt activation commands. `pip install -r requirements.txt`
+installed cleanly, `scripts/check_notebooks.py` passed, and all 13
+notebooks ran top to bottom with the full `Qwen2.5-1.5B-Instruct` model and
+no errors (see Reproducibility below for how the outputs compared). This
+can be re-run from the repo's **Actions** tab (the "Windows notebooks"
+workflow). Windows with an NVIDIA GPU (`cuda`) has **not** been tested. If you hit a platform-specific snag, please open a GitHub
 issue.
 
 1. Make sure you have Python 3.10+ installed.
@@ -437,6 +446,19 @@ is exactly what "checked" means:
   (`cuda` backend), Python 3.13.15, PyTorch 2.11.0+cu128, Transformers
   5.16.1, Gensim 4.4.0 — a different OS, a different GPU vendor, and a different
   PyTorch build than the environment above.
+- **Also run on Windows (CPU):** a GitHub Actions `windows-latest`
+  runner, Python 3.12.10, PyTorch 2.14.0+cpu, Transformers 5.17.0 (the
+  newest release at the time, installed from `requirements.txt`, not the
+  lock file), running in float32. All 13 notebooks ran without errors.
+  Compared with the committed outputs: notebooks 3 and 5 matched
+  exactly; notebook 4 had the same one-word difference as Colab (see
+  below); notebook 2's generated text was identical, with probabilities
+  within a few hundredths of a percent; and in notebook 1, Section 10's
+  "Version 3" prompt picked a blank space (4.80%) instead of " well"
+  (5.00%). The advanced notebooks showed small numeric differences only,
+  with the same conclusions. Expect CPU runs to be much slower on the
+  heaviest cells: advanced notebook 2's 300-step calculation took about
+  11 minutes there, vs. about 40 seconds on the Mac's GPU.
 - **Do outputs match exactly across backends? Checked directly, and the
   honest answer is: closely, but not bit-for-bit.** A Colab re-run on
   2026-09-25 was compared output-by-output against the committed local
