@@ -300,7 +300,7 @@ Command Prompt activation commands. `pip install -r requirements.txt`
 installed cleanly, `scripts/check_notebooks.py` passed, and all 13
 notebooks ran top to bottom with the full `Qwen2.5-1.5B-Instruct` model and
 no errors (see Reproducibility below for how the outputs compared). This
-can be re-run from the repo's **Actions** tab (the "Windows notebooks"
+can be re-run from the repo's **Actions** tab (the "Cross-platform notebooks"
 workflow). Windows with an NVIDIA GPU (`cuda`) has **not** been tested. If you hit a platform-specific snag, please open a GitHub
 issue.
 
