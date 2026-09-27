@@ -22,9 +22,10 @@ import glob
 import json
 import re
 import sys
+from typing import Any
 
 
-def canonical_json(nb: dict) -> str:
+def canonical_json(nb: dict[str, Any]) -> str:
     # Every notebook is stored in exactly this form. Tools like
     # nbformat.write() or `ruff check --fix` default to literal UTF-8 and a
     # trailing newline instead, which rewrites every non-ASCII character in

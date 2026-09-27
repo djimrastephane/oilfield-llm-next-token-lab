@@ -14,3 +14,5 @@ jobs:
         with:
           python-version: "3.12"
       - run: python3 scripts/check_notebooks.py
+      - run: pip install mypy==2.3.1
+      - run: mypy --strict scripts/check_notebooks.py
