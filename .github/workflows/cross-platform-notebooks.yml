@@ -33,7 +33,7 @@ jobs:
           python -m venv .venv
           .venv\Scripts\Activate.ps1
           pip install -r requirements.txt
-          python -c "import torch, transformers, gensim; print(torch.__version__, transformers.__version__, gensim.__version__, 'cuda' if torch.cuda.is_available() else 'cpu')"
+          python -c "import torch, transformers, gensim; from transformers.utils import is_torch_available; print(torch.__version__, transformers.__version__, gensim.__version__, 'cuda' if torch.cuda.is_available() else 'cpu'); assert is_torch_available(), 'transformers cannot use this torch version'"
       - name: README step 3 (Command Prompt activation)
         if: runner.os == 'Windows'
         shell: cmd
@@ -47,7 +47,7 @@ jobs:
           python3 -m venv .venv
           source .venv/bin/activate
           pip install -r requirements.txt
-          python -c "import torch, transformers, gensim; print(torch.__version__, transformers.__version__, gensim.__version__, 'cuda' if torch.cuda.is_available() else 'cpu')"
+          python -c "import torch, transformers, gensim; from transformers.utils import is_torch_available; print(torch.__version__, transformers.__version__, gensim.__version__, 'cuda' if torch.cuda.is_available() else 'cpu'); assert is_torch_available(), 'transformers cannot use this torch version'"
       - name: Notebook structure check (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
