@@ -13,6 +13,11 @@ env:
   HF_HOME: ${{ github.workspace }}/.hf-cache
   GENSIM_DATA_DIR: ${{ github.workspace }}/.gensim-data
   PYTHONUTF8: "0"  # keep the OS default text encoding, as a real user would have
+  # Download and "Loading weights" progress bars (Hugging Face Hub and Transformers
+  # both honor this) send a stream of output updates. On a first run with no
+  # cached model, the slow Intel Mac runner fell over 60 s behind on them and
+  # failed with "Timeout waiting for IOPub output". CI only; users still see them.
+  HF_HUB_DISABLE_PROGRESS_BARS: "1"
 
 jobs:
   setup-and-check:
@@ -96,7 +101,7 @@ jobs:
           path: |
             .hf-cache
             .gensim-data
-          key: ${{ runner.os }}-models-qwen2.5-1.5b-glove100-v1
+          key: ${{ runner.os }}-models-qwen2.5-1.5b-glove100-v2
       # nbclient's default 4-second wait for a cell's output is too short on slow
       # CPU runners: late output was silently dropped while the job still passed.
       # Wait longer, and fail if output is still missing.
