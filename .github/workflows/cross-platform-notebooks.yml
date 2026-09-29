@@ -1,7 +1,7 @@
 name: Cross-platform notebooks
 
-# Runs the README's Local setup steps on Windows and Linux runners (CPU only, no
-# GPU) and executes every notebook top to bottom. Heavy (real model inference on
+# Runs the README's Local setup steps on Windows, Linux and Intel macOS runners
+# (CPU only, no GPU) and executes every notebook top to bottom. Heavy (real model inference on
 # CPU), so it only runs on demand, or on PRs that change this workflow file.
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-26-intel]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
           python -m venv .venv
           .venv\Scripts\Activate.ps1
           pip install -r requirements.txt
-          python -c "import torch, transformers, gensim; print(torch.__version__, transformers.__version__, gensim.__version__, 'cuda' if torch.cuda.is_available() else 'cpu')"
+          python -c "import torch, transformers, gensim; from transformers.utils import is_torch_available; print(torch.__version__, transformers.__version__, gensim.__version__, 'cuda' if torch.cuda.is_available() else 'cpu'); assert is_torch_available(), 'transformers cannot use this torch version'"
       - name: README step 3 (Command Prompt activation)
         if: runner.os == 'Windows'
         shell: cmd
@@ -41,21 +41,21 @@ jobs:
           call .venv\Scripts\activate
           python -c "import sys; print(sys.prefix)"
       - name: README steps 2-4 (bash)
-        if: runner.os == 'Linux'
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           python3 -m venv .venv
           source .venv/bin/activate
           pip install -r requirements.txt
-          python -c "import torch, transformers, gensim; print(torch.__version__, transformers.__version__, gensim.__version__, 'cuda' if torch.cuda.is_available() else 'cpu')"
+          python -c "import torch, transformers, gensim; from transformers.utils import is_torch_available; print(torch.__version__, transformers.__version__, gensim.__version__, 'cuda' if torch.cuda.is_available() else 'cpu'); assert is_torch_available(), 'transformers cannot use this torch version'"
       - name: Notebook structure check (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           .venv\Scripts\Activate.ps1
           python scripts/check_notebooks.py
-      - name: Notebook structure check (Linux)
-        if: runner.os == 'Linux'
+      - name: Notebook structure check (macOS / Linux)
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           source .venv/bin/activate
@@ -63,12 +63,14 @@ jobs:
 
   execute:
     needs: setup-and-check
+    # One OS failing setup shouldn't stop the others' notebooks from running.
+    if: ${{ !cancelled() }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-26-intel]
         notebook:
           - notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
           - notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
@@ -95,6 +97,9 @@ jobs:
             .hf-cache
             .gensim-data
           key: ${{ runner.os }}-models-qwen2.5-1.5b-glove100-v1
+      # nbclient's default 4-second wait for a cell's output is too short on slow
+      # CPU runners: late output was silently dropped while the job still passed.
+      # Wait longer, and fail if output is still missing.
       - name: Execute notebook (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -102,15 +107,15 @@ jobs:
           python -m venv .venv
           .venv\Scripts\Activate.ps1
           pip install -r requirements.txt
-          jupyter nbconvert --to notebook --execute "${{ matrix.notebook }}" --output-dir executed --ExecutePreprocessor.timeout=-1
-      - name: Execute notebook (Linux)
-        if: runner.os == 'Linux'
+          jupyter nbconvert --to notebook --execute "${{ matrix.notebook }}" --output-dir executed --ExecutePreprocessor.timeout=-1 --ExecutePreprocessor.iopub_timeout=60 --ExecutePreprocessor.raise_on_iopub_timeout=True
+      - name: Execute notebook (macOS / Linux)
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           python3 -m venv .venv
           source .venv/bin/activate
           pip install -r requirements.txt
-          jupyter nbconvert --to notebook --execute "${{ matrix.notebook }}" --output-dir executed --ExecutePreprocessor.timeout=-1
+          jupyter nbconvert --to notebook --execute "${{ matrix.notebook }}" --output-dir executed --ExecutePreprocessor.timeout=-1 --ExecutePreprocessor.iopub_timeout=60 --ExecutePreprocessor.raise_on_iopub_timeout=True
       - name: Upload executed notebook
         if: always()
         uses: actions/upload-artifact@v4
