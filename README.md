@@ -302,7 +302,21 @@ installed cleanly, `scripts/check_notebooks.py` passed, and all 13
 notebooks ran top to bottom with the full `Qwen2.5-1.5B-Instruct` model and
 no errors (see Reproducibility below for how the outputs compared). This
 can be re-run from the repo's **Actions** tab (the "Cross-platform notebooks"
-workflow). Windows with an NVIDIA GPU (`cuda`) has **not** been tested. If you hit a platform-specific snag, please open a GitHub
+workflow). Windows with an NVIDIA GPU (`cuda`) has **not** been tested.
+
+**Intel Macs are supported too, with older library versions.** Apple
+Silicon Macs always use their built-in GPU, so Intel Macs are the only
+Macs that run these notebooks on the CPU. PyTorch stopped releasing
+versions for Intel Macs after 2.2.2, and newer Transformers releases don't
+work with it, so on Intel Macs only `requirements.txt` automatically
+installs Transformers 4.57 and NumPy 1.26 instead of the newest versions.
+You don't need to do anything differently. On 2026-09-29 a GitHub Actions
+Intel Mac runner (macOS 26, 4 CPUs, 14 GB RAM) followed the setup steps
+above and ran all 13 notebooks with the full model and no errors. One
+visible difference: notebook 2's random-sampling examples come out
+differently from the outputs shown here (see Reproducibility below).
+
+If you hit a platform-specific snag, please open a GitHub
 issue.
 
 1. Make sure you have Python 3.10+ installed.
@@ -463,6 +477,17 @@ is exactly what "checked" means:
   with the same conclusions. Expect CPU runs to be much slower on the
   heaviest cells: advanced notebook 2's 300-step calculation took about
   11 minutes there, vs. about 40 seconds on the Mac's GPU.
+- **Also run on an Intel Mac (CPU):** a GitHub Actions `macos-26-intel`
+  runner, Python 3.12.10, PyTorch 2.2.2, Transformers 4.57.6, NumPy
+  1.26.4 (the versions `requirements.txt` picks on Intel Macs), float32.
+  All 13 notebooks ran without errors. Twelve produced the same words and
+  tokens as the Linux run above. The exception is notebook 2's
+  random-sampling examples (the seed=0 draw, the 500-draw tally, and the
+  sampled sentences): the same seed gives a different random sequence on
+  PyTorch 2.2.2 than on the PyTorch 2.14 used everywhere else, so those
+  results differ from the ones shown here. They're still reproducible:
+  two separate Intel Mac runs produced identical sampling results.
+  Notebook 2's greedy output and all its probabilities match.
 - **Do outputs match exactly across backends? Checked directly, and the
   honest answer is: closely, but not bit-for-bit.** A Colab re-run on
   2026-09-25 was compared output-by-output against the committed local
