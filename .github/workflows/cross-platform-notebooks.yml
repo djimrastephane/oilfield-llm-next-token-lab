@@ -1,7 +1,7 @@
 name: Cross-platform notebooks
 
-# Runs the README's Local setup steps on Windows and Linux runners (CPU only, no
-# GPU) and executes every notebook top to bottom. Heavy (real model inference on
+# Runs the README's Local setup steps on Windows, Linux and Intel macOS runners
+# (CPU only, no GPU) and executes every notebook top to bottom. Heavy (real model inference on
 # CPU), so it only runs on demand, or on PRs that change this workflow file.
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-26-intel]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
           call .venv\Scripts\activate
           python -c "import sys; print(sys.prefix)"
       - name: README steps 2-4 (bash)
-        if: runner.os == 'Linux'
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           python3 -m venv .venv
@@ -54,8 +54,8 @@ jobs:
         run: |
           .venv\Scripts\Activate.ps1
           python scripts/check_notebooks.py
-      - name: Notebook structure check (Linux)
-        if: runner.os == 'Linux'
+      - name: Notebook structure check (macOS / Linux)
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           source .venv/bin/activate
@@ -63,12 +63,14 @@ jobs:
 
   execute:
     needs: setup-and-check
+    # One OS failing setup shouldn't stop the others' notebooks from running.
+    if: ${{ !cancelled() }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-26-intel]
         notebook:
           - notebooks/01_how_a_real_llm_predicts_the_next_token.ipynb
           - notebooks/02_temperature_sampling_and_decoding_strategies.ipynb
@@ -103,8 +105,8 @@ jobs:
           .venv\Scripts\Activate.ps1
           pip install -r requirements.txt
           jupyter nbconvert --to notebook --execute "${{ matrix.notebook }}" --output-dir executed --ExecutePreprocessor.timeout=-1
-      - name: Execute notebook (Linux)
-        if: runner.os == 'Linux'
+      - name: Execute notebook (macOS / Linux)
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           python3 -m venv .venv
